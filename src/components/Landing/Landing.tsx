@@ -29,7 +29,7 @@ export default function Landing() {
           >
             <img
               src="https://fazier.com/api/v1/public/badges/embed_image.svg?launch_id=5789&badge_type=monthly&theme=light"
-              width={270}
+              width={400}
               alt="Fazier badge"
             />
           </a>
