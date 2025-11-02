@@ -48,8 +48,8 @@
 
 .fazierBadge img {
   display: block;
-  width: 120px;
-  height: auto;
+  width: 250px;
+  height: 54px;
   border-radius: 6px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
