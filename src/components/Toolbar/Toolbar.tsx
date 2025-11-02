@@ -246,14 +246,14 @@ export default function Toolbar({
       </div>
 
       <a
-        href="https://fazier.com"
+        href="https://fazier.com/launches/pseudorun"
         target="_blank"
         rel="noopener noreferrer"
         className={styles.fazierBadge}
       >
         <img
-          src={`https://fazier.com/api/v1//public/badges/launch_badges.svg?badge_type=launched&theme=${theme === 'dark' ? 'dark' : 'light'}`}
-          width={120}
+          src={`https://fazier.com/api/v1/public/badges/embed_image.svg?launch_id=5789&badge_type=monthly&theme=${theme === 'dark' ? 'dark' : 'light'}`}
+          width={270}
           alt="Fazier badge"
         />
       </a>
