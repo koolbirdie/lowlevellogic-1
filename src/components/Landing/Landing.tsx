@@ -34,19 +34,6 @@ export default function Landing() {
               alt="Fazier badge"
             />
           </a>
-          <a
-            href="https://www.producthunt.com/products/pseudorun-2?embed=true&utm_source=badge-featured&utm_medium=badge&utm_source=badge-pseudorun-3"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.productHuntBadge}
-          >
-            <img
-              src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1029908&theme=light&t=1761469803790"
-              alt="PseudoRun - Run Cambridge pseudocode like real code. | Product Hunt"
-              width={250}
-              height={54}
-            />
-          </a>
         </div>
       </div>
       <div className={styles.hero}>

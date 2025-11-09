@@ -225,27 +225,6 @@
   border: 1px solid var(--border-color);
 }
 
-.productHuntBadge {
-  display: inline-flex;
-  align-items: center;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  opacity: 0.85;
-  line-height: 0;
-}
-
-.productHuntBadge:hover {
-  transform: translateY(-1px);
-  opacity: 1;
-}
-
-.productHuntBadge img {
-  display: block;
-  width: 250px;
-  height: 54px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
   .toolbar {
@@ -268,10 +247,6 @@
   }
 
   .fazierBadge {
-    display: none;
-  }
-
-  .productHuntBadge {
     display: none;
   }
 }
