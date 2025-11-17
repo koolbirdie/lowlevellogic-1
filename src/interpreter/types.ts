@@ -50,6 +50,7 @@ export type ASTNode =
   | CloseFileNode
   | ReadFileNode
   | WriteFileNode
+  | MemoryFreeNode
   | ExpressionNode;
 
 export type ExpressionNode =
