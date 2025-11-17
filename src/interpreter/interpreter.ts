@@ -1485,7 +1485,7 @@ export class Interpreter {
     throw new RuntimeError(`Function '${node.name}' not found`, node.line);
   }
 
-  private evaluateAddressOf(node: AddressOfNode, context: ExecutionContext): number {
+  private evaluateAddressOf(node: AddressOfNode, _context: ExecutionContext): number {
     const address = this.variableAddresses.get(node.target.name);
     if (address === undefined) {
       throw new RuntimeError(`Variable '${node.target.name}' not found in memory`, node.line);
