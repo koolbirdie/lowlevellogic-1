@@ -29,6 +29,16 @@
 - ✅ **22 Built-in Examples** - Learn from comprehensive sample programs
 - ✅ **Responsive Design** - Works on desktop, tablet, and mobile
 - ✅ **User Authentication** - Secure login with Google or Email/Password
+- ✅ **Guest Mode** - Try all features without signing up!
+
+### 🧠 Advanced Memory Management (NEW!)
+- ✅ **64KB Simulated RAM** - Low-level memory environment for algorithm research
+- ✅ **Pointer Operations** - Address-of (`&`) and dereference (`*`) operators
+- ✅ **Dynamic Memory** - `MALLOC()` and `FREE()` for heap allocation
+- ✅ **Memory Visualization** - Real-time memory state with hex dump view
+- ✅ **Operation Tracing** - Complete memory operation logging
+- ✅ **Type-Safe Pointers** - `POINTER_TO_INTEGER`, `POINTER_TO_REAL`, `POINTER_TO_CHAR`, `VOID_POINTER`
+- ✅ **Educational Debugging** - Perfect for learning low-level programming concepts
 
 ### 🎨 User Experience
 - 🖱️ **Split-view Editor** - Code on left, output on right
@@ -47,6 +57,14 @@ STRING      - Text values
 CHAR        - Single character
 BOOLEAN     - TRUE or FALSE
 ARRAY       - Single and multi-dimensional arrays
+```
+
+### 🧠 Memory Management Types (NEW!)
+```
+POINTER_TO_INTEGER    - Pointer to integer values
+POINTER_TO_REAL       - Pointer to real numbers
+POINTER_TO_CHAR       - Pointer to character values
+VOID_POINTER          - Generic pointer type
 ```
 
 ### 🔀 Control Structures
@@ -112,12 +130,48 @@ INPUT variable
 OUTPUT expression, "text", variable
 ```
 
+### 🧠 Memory Management Operations (NEW!)
+
+#### Pointer Operations
+```pseudocode
+// Address-of and dereference
+DECLARE x : INTEGER
+DECLARE ptr : POINTER_TO_INTEGER
+ptr <-- &x        // Get memory address of x
+*ptr <-- 100      // Write value through pointer
+OUTPUT *ptr       // Read value through pointer
+```
+
+#### Dynamic Memory Allocation
+```pseudocode
+DECLARE dynamic : POINTER_TO_INTEGER
+dynamic <-- MALLOC(10)    // Allocate 10 bytes
+*dynamic <-- 42          // Write to allocated memory
+FREE(dynamic)            // Deallocate memory
+```
+
+#### Memory Size Information
+```pseudocode
+DECLARE size : INTEGER
+size <-- SIZE_OF(INTEGER)      // Get size of data type
+size <-- SIZE_OF(REAL)         // Get size of real
+size <-- SIZE_OF(POINTER_TO_INTEGER)  // Get pointer size
+```
+
+#### Hexadecimal Literals
+```pseudocode
+DECLARE address : INTEGER
+address <-- 0x1000     // Hexadecimal literal
+OUTPUT address         // Displays: 4096
+```
+
 ### 🧮 Operators
 
 **Arithmetic:** `+` `-` `*` `/` `DIV` `MOD`
 **Comparison:** `=` `<>` `<` `>` `<=` `>=`
 **Logical:** `AND` `OR` `NOT`
 **String:** `&` (concatenation)
+**Memory:** `&` (address-of), `*` (dereference)
 **Assignment:** `<--` or `←`
 
 ### 📚 Built-in Functions
@@ -132,6 +186,11 @@ OUTPUT expression, "text", variable
 - `INT(x)` - Converts to integer (truncates)
 - `REAL(x)` - Converts to real number
 - `STRING(x)` - Converts to string
+
+**Memory Functions:**
+- `MALLOC(size)` - Allocates memory and returns pointer
+- `FREE(pointer)` - Deallocates dynamically allocated memory
+- `SIZE_OF(dataType)` - Returns size in bytes of data type
 
 **Math Functions:**
 - `ROUND(x, decimals)` - Rounds to decimal places
@@ -194,7 +253,30 @@ npm run dev
 # Open http://localhost:3000
 ```
 
-### Firebase Authentication Setup
+## 🔐 Authentication & Access Requirements
+
+### Quick Start (No Registration Required!)
+
+**🎉 GREAT NEWS!** All features including the new memory management system work immediately without registration:
+
+- ✅ **Full pseudocode execution** - Run any IGCSE/A-LEVELS program
+- ✅ **Memory debugging** - Complete pointer and memory visualization
+- ✅ **Real-time validation** - Syntax checking and error detection
+- ✅ **All examples** - Access 22 built-in example programs
+- ✅ **File operations** - Download/upload your code
+- ✅ **Auto-save** - Code persists in browser
+
+**Just visit the website and start coding!**
+
+### Optional Registration Benefits
+
+Create an account for additional cloud features:
+- ☁️ **Save programs online** - Access your code from any device
+- 📚 **Program library** - Manage and organize your saved programs
+- 🔗 **Share code** - Generate shareable links to your programs
+- 📧 **Email verification** - Full cloud synchronization
+
+### Firebase Authentication Setup (For Local Development)
 
 This application uses Firebase for user authentication. Follow these steps to set up:
 
@@ -271,12 +353,20 @@ npm run preview
 3. **INPUT prompts** appear as browser dialogs
 4. **Errors** show in the error panel with line numbers
 
+### Memory Debugging (NEW!)
+
+1. **Press "M" key** or click the memory button to toggle memory view
+2. **Variables Tab** - See all variables with addresses and values
+3. **Memory Dump Tab** - View raw memory in hexadecimal format
+4. **Trace Log Tab** - See complete memory operation history
+5. **Real-time updates** - Memory view updates during execution
+
 ### Managing Code
 
 - **Clear** - Remove all code (with confirmation)
 - **Download** - Save code as timestamped .txt file
 - **Upload** - Load code from .txt file
-- **Examples** - Load any of 15 sample programs
+- **Examples** - Load any of 22 sample programs
 
 ### Learning Features
 
@@ -284,6 +374,7 @@ npm run preview
 - **Detailed error messages** - Understand what went wrong
 - **Line number references** - Jump directly to problems
 - **Example programs** - Learn by studying working code
+- **Memory visualization** - Understand how memory works
 
 ## 🎯 IGCSE/A-LEVELS Compliance
 
@@ -332,12 +423,18 @@ src/
 │   ├── Editor/         # CodeMirror editor with syntax highlighting
 │   ├── OutputPanel/    # Animated output display
 │   ├── ErrorDisplay/   # Error message panel
-│   └── Toolbar/        # Control buttons
+│   ├── Toolbar/        # Control buttons
+│   ├── MemoryView/     # Memory visualization and debugging (NEW!)
+│   └── Auth/           # User authentication components
 ├── interpreter/        # Core execution engine
-│   ├── lexer.ts       # Tokenization
-│   ├── parser.ts      # AST generation
-│   ├── interpreter.ts # Code execution
-│   └── types.ts       # Type definitions
+│   ├── lexer.ts       # Tokenization (extended with memory keywords)
+│   ├── parser.ts      # AST generation (extended with pointer operations)
+│   ├── interpreter.ts # Code execution (integrated memory engine)
+│   ├── memory.ts      # Memory management system (NEW!)
+│   ├── tracer.ts      # Memory operation tracing (NEW!)
+│   └── types.ts       # Type definitions (extended with pointer types)
+├── contexts/           # React contexts (Auth, Theme)
+├── services/           # Firebase and cloud services
 ├── validator/          # Real-time syntax validation
 ├── utils/             # Helper functions
 └── constants/         # Example programs
@@ -345,6 +442,7 @@ src/
 
 ## 📝 Example Code
 
+### Traditional IGCSE Example
 ```pseudocode
 // Bubble Sort Algorithm
 DECLARE nums : ARRAY[1:5] OF INTEGER
@@ -383,6 +481,60 @@ FOR index <-- 1 TO 5
 NEXT index
 ```
 
+### Memory Management Example (NEW!)
+```pseudocode
+// Linked List Implementation using Pointers
+DECLARE nodeData : ARRAY[1:3] OF INTEGER
+DECLARE nextNode : ARRAY[1:3] OF INTEGER
+DECLARE head, current, newNode : POINTER_TO_INTEGER
+DECLARE i : INTEGER
+
+// Initialize linked list data
+nodeData[1] <-- 10
+nextNode[1] <-- 2    // Points to node 2
+nodeData[2] <-- 20
+nextNode[2] <-- 3    // Points to node 3
+nodeData[3] <-- 30
+nextNode[3] <-- 0    // NULL pointer
+
+// Create head pointer
+head <-- &nodeData[1]
+
+// Traverse linked list using pointers
+current <-- head
+OUTPUT "Linked List Contents:"
+WHILE current <> 0 DO
+    OUTPUT "Node value: ", *current
+    // Calculate next node address (simple example)
+    DECLARE nodeIndex : INTEGER
+    nodeIndex <-- (current - &nodeData[1]) / 4 + 1
+    IF nodeIndex <= 3 THEN
+        current <-- &nodeData[nextNode[nodeIndex]]
+    ELSE
+        current <-- 0  // End of list
+    ENDIF
+ENDWHILE
+
+// Dynamic memory allocation example
+DECLARE dynamicPtr : POINTER_TO_INTEGER
+DECLARE allocSize : INTEGER
+
+allocSize <-- SIZE_OF(INTEGER) * 5
+dynamicPtr <-- MALLOC(allocSize)
+
+// Use dynamically allocated memory
+*dynamicPtr <-- 100
+*(dynamicPtr + 4) <-- 200  // Second integer
+
+OUTPUT "Dynamic memory values:"
+OUTPUT "First: ", *dynamicPtr
+OUTPUT "Second: ", *(dynamicPtr + 4)
+
+// Clean up
+FREE(dynamicPtr)
+OUTPUT "Memory deallocated"
+```
+
 ## 🐛 Error Detection
 
 The editor detects and reports:
@@ -401,6 +553,14 @@ The editor detects and reports:
 - Uninitialized variables
 - Invalid function parameters
 
+### Memory Errors (NEW!)
+- Invalid pointer dereference
+- Memory allocation failure
+- Access to freed memory
+- Null pointer access
+- Memory bounds violations
+- Invalid pointer types
+
 ## 🌟 Use Cases
 
 - 📚 **Learning** - Practice IGCSE/A-LEVELS pseudocode
@@ -408,6 +568,10 @@ The editor detects and reports:
 - 👨‍🏫 **Teaching** - Demonstrate concepts in class
 - 🔬 **Algorithm Testing** - Verify logic before implementation
 - 💡 **Quick Prototyping** - Test ideas rapidly
+- 🧠 **Memory Education** - Learn low-level programming concepts
+- 🔍 **Algorithm Research** - Analyze memory usage patterns
+- 🎓 **C/C++ Preparation** - Practice pointer concepts before learning C
+- 📊 **Data Structures** - Implement linked lists, trees, and graphs
 
 ## 🎯 Roadmap
 
