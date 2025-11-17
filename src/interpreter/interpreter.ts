@@ -844,6 +844,26 @@ export class Interpreter {
       }
 
       this.setArrayElement(variable.value, indices, value, variable.dimensions!, node.line);
+    } else if ((node.target as any).type === 'Dereference') {
+      // Pointer dereference read file (*ptr)
+      const derefNode = node.target as DereferenceNode;
+      const pointerAddress = this.evaluateExpression(derefNode.pointer, context);
+
+      if (typeof pointerAddress !== 'number') {
+        throw new RuntimeError(`Dereference requires pointer address`, node.line);
+      }
+
+      // Parse the line value as INTEGER first, then fallback to string
+      let value: any;
+      const parsedInt = parseInt(line);
+      if (!isNaN(parsedInt)) {
+        value = parsedInt;
+      } else {
+        value = line;
+      }
+
+      // Write to memory location pointed to by pointer
+      this.memory.write(pointerAddress, value);
     }
 
     yield line;
