@@ -24,6 +24,7 @@ import {
   CloseFileNode,
   ReadFileNode,
   WriteFileNode,
+  MemoryFreeNode,
   LiteralNode,
   IdentifierNode,
   ArrayAccessNode,
@@ -184,6 +185,8 @@ export class Parser {
           return this.parseReadFile();
         case 'WRITEFILE':
           return this.parseWriteFile();
+        case 'FREE':
+          return this.parseMemoryFree();
         default:
           throw new Error(`Unexpected keyword '${token.value}' at line ${token.line}`);
       }
@@ -773,6 +776,18 @@ export class Parser {
     };
   }
 
+  private parseMemoryFree(): MemoryFreeNode {
+    const line = this.advance().line; // consume FREE
+
+    const pointer = this.parseExpression();
+
+    return {
+      type: 'MemoryFree',
+      pointer,
+      line
+    };
+  }
+
   private parseParameters(): Parameter[] {
     const parameters: Parameter[] = [];
 
@@ -827,6 +842,11 @@ export class Parser {
 
     if (type === 'ARRAY') {
       return 'ARRAY' as DataType;
+    }
+
+    // Pointer types
+    if (['POINTER_TO_INTEGER', 'POINTER_TO_REAL', 'POINTER_TO_CHAR', 'VOID_POINTER'].includes(type)) {
+      return type as DataType;
     }
 
     throw new Error(`Invalid data type '${type}' at line ${token.line}`);
@@ -988,6 +1008,31 @@ export class Parser {
   private parsePrimary(): ExpressionNode {
     const token = this.peek();
 
+    // Address-of operator (&)
+    if (token.type === 'OPERATOR' && token.value === '&') {
+      const op = this.advance();
+      const operand = this.parsePrimary();
+      if (operand.type !== 'Identifier') {
+        throw new Error(`& operator requires identifier at line ${op.line}`);
+      }
+      return {
+        type: 'AddressOf',
+        target: operand as IdentifierNode,
+        line: op.line
+      };
+    }
+
+    // Dereference operator (*)
+    if (token.type === 'OPERATOR' && token.value === '*') {
+      const op = this.advance();
+      const operand = this.parsePrimary();
+      return {
+        type: 'Dereference',
+        pointer: operand,
+        line: op.line
+      };
+    }
+
     // Literals
     if (token.type === 'NUMBER') {
       this.advance();
@@ -1039,8 +1084,8 @@ export class Parser {
       return expr;
     }
 
-    // Type conversion functions (INT, REAL, STRING are keywords but can be function calls)
-    if (token.type === 'KEYWORD' && ['INT', 'REAL', 'STRING'].includes(token.value)) {
+    // Special function calls (MALLOC, SIZE_OF, and type conversion functions)
+    if (token.type === 'KEYWORD' && ['INT', 'REAL', 'STRING', 'MALLOC', 'SIZE_OF'].includes(token.value)) {
       if (this.tokens[this.current + 1]?.type === 'LPAREN') {
         const name = this.advance().value;
         this.advance(); // consume (
@@ -1060,6 +1105,34 @@ export class Parser {
 
         this.consume('RPAREN', 'Expected ) after function arguments');
 
+        // Handle special cases
+        if (name === 'MALLOC') {
+          // MALLOC expects size argument and returns a pointer
+          if (args.length !== 1) {
+            throw new Error(`MALLOC expects exactly 1 argument at line ${token.line}`);
+          }
+          return {
+            type: 'MemoryAllocation',
+            size: args[0],
+            targetType: 'VOID_POINTER', // Default type, can be cast later
+            line: token.line
+          };
+        }
+
+        if (name === 'SIZE_OF') {
+          // SIZE_OF expects a type argument
+          if (args.length !== 1 || args[0].type !== 'Identifier') {
+            throw new Error(`SIZE_OF expects a type identifier at line ${token.line}`);
+          }
+          const typeName = (args[0] as IdentifierNode).name;
+          return {
+            type: 'SizeOf',
+            dataType: typeName as DataType,
+            line: token.line
+          };
+        }
+
+        // Regular function call for INT, REAL, STRING
         return {
           type: 'FunctionCall',
           name,

@@ -13,7 +13,9 @@ const KEYWORDS = new Set([
   'RETURN', 'RETURNS', 'CALL', 'BYVAL', 'BYREF', 'TRUE', 'FALSE',
   'AND', 'OR', 'NOT', 'DIV', 'MOD',
   'OPENFILE', 'CLOSEFILE', 'READFILE', 'WRITEFILE', 'EOF',
-  'READ', 'WRITE', 'APPEND'
+  'READ', 'WRITE', 'APPEND',
+  // Memory management keywords
+  'MALLOC', 'FREE', 'SIZE_OF', 'POINTER_TO_INTEGER', 'POINTER_TO_REAL', 'POINTER_TO_CHAR', 'VOID_POINTER'
 ]);
 
 export function tokenize(code: string): Token[] {
@@ -101,14 +103,30 @@ export function tokenize(code: string): Token[] {
       continue;
     }
 
-    // Numbers
+    // Numbers (including hex literals)
     if (/\d/.test(char)) {
       let num = '';
       const startColumn = column;
-      while (i < code.length && /[\d.]/.test(code[i])) {
-        num += code[i];
-        i++;
-        column++;
+
+      // Check for hex literal (0x prefix)
+      if (char === '0' && code[i + 1] && code[i + 1].toLowerCase() === 'x') {
+        num = '0x';
+        i += 2;
+        column += 2;
+        while (i < code.length && /[0-9a-fA-F]/.test(code[i])) {
+          num += code[i];
+          i++;
+          column++;
+        }
+        if (num.length === 2) { // Only "0x" without digits
+          throw new Error(`Invalid hex literal at line ${line}, column ${startColumn}`);
+        }
+      } else {
+        while (i < code.length && /[\d.]/.test(code[i])) {
+          num += code[i];
+          i++;
+          column++;
+        }
       }
       tokens.push({ type: 'NUMBER', value: num, line, column: startColumn });
       continue;

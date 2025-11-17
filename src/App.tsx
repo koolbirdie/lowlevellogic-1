@@ -10,6 +10,7 @@ import SaveAsModal from './components/SaveAsModal/SaveAsModal';
 import ProgramsLibrary from './components/ProgramsLibrary/ProgramsLibrary';
 import DebugControls from './components/DebugControls/DebugControls';
 import VariablesPanel from './components/VariablesPanel/VariablesPanel';
+import MemoryView from './components/MemoryView/MemoryView';
 import EmailVerificationBanner from './components/EmailVerificationBanner/EmailVerificationBanner';
 import { ShareModal } from './components/ShareModal/ShareModal';
 import { ExportModal } from './components/ExportModal/ExportModal';
@@ -25,7 +26,7 @@ import { validate } from './validator/validator';
 import { saveCode, loadCode, clearSavedCode } from './utils/storage';
 import { downloadCode, readFile } from './utils/fileHandler';
 import { debounce } from './utils/debounce';
-import { RuntimeError, DebugState } from './interpreter/types';
+import { RuntimeError, DebugState, MemoryTraceEntry } from './interpreter/types';
 import { useAuth } from './contexts/AuthContext';
 import { Program } from './types/program';
 import { createProgram, updateProgram } from './services/programsService';
@@ -68,6 +69,10 @@ function App() {
   const [isPaused, setIsPaused] = useState(false);
   const stepResolveRef = useRef<(() => void) | null>(null);
   const interpreterRef = useRef<Interpreter | null>(null);
+
+  // Memory view state
+  const [showMemoryView, setShowMemoryView] = useState(false);
+  const [memoryTrace] = useState<MemoryTraceEntry[]>([]);
 
   // Guest mode auth modal state
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -533,6 +538,11 @@ function App() {
     setCode(newCode);
   };
 
+  // Handle memory view toggle
+  const handleToggleMemoryView = () => {
+    setShowMemoryView(!showMemoryView);
+  };
+
   // Auto-save current program every 30 seconds
   useEffect(() => {
     if (!currentUser || !currentProgram || !currentProgram.id) return;
@@ -576,6 +586,7 @@ function App() {
         onOpenSyntaxReference={() => setShowSyntaxReference(true)}
         onOpenPracticeProblems={() => setShowPracticeProblems(true)}
         onOpenExamMode={() => setShowExamModeStart(true)}
+        onToggleMemoryView={handleToggleMemoryView}
         // onOpenLearningTools={() => setShowLearningTools(true)}
         isRunning={isRunning}
         examModeActive={examMode.active}
@@ -612,9 +623,17 @@ function App() {
               currentLine={debugState.currentLine}
             />
           )}
-          
-          <OutputPanel 
-            output={output} 
+
+          {showMemoryView && interpreterRef.current && (
+            <MemoryView
+              memory={interpreterRef.current.getMemoryEngine()}
+              variableAddresses={interpreterRef.current.getVariableAddresses()}
+              traceLog={memoryTrace}
+            />
+          )}
+
+          <OutputPanel
+            output={output}
             isRunning={isRunning}
             waitingForInput={waitingForInput}
             inputPrompt={inputPrompt}

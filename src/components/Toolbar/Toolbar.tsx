@@ -20,6 +20,7 @@ interface ToolbarProps {
   onOpenSyntaxReference: () => void;
   onOpenPracticeProblems: () => void;
   onOpenExamMode: () => void;
+  onToggleMemoryView: () => void;
   // onOpenLearningTools: () => void;
   isRunning: boolean;
   examModeActive: boolean;
@@ -41,6 +42,7 @@ export default function Toolbar({
   onOpenSyntaxReference,
   onOpenPracticeProblems,
   onOpenExamMode,
+  onToggleMemoryView,
   // onOpenLearningTools,
   isRunning,
   examModeActive
@@ -119,6 +121,14 @@ export default function Toolbar({
         disabled={isRunning}
       >
         🐛 Debug
+      </button>
+
+      <button
+        className={styles.secondaryButton}
+        onClick={onToggleMemoryView}
+        title="Toggle Memory View"
+      >
+        💾 Memory
       </button>
 
       <button className={styles.secondaryButton} onClick={onClear}>

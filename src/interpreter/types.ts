@@ -28,7 +28,8 @@ export interface Token {
 }
 
 // Data types
-export type DataType = 'INTEGER' | 'REAL' | 'STRING' | 'CHAR' | 'BOOLEAN' | 'ARRAY';
+export type DataType = 'INTEGER' | 'REAL' | 'STRING' | 'CHAR' | 'BOOLEAN' | 'ARRAY' |
+                      'POINTER_TO_INTEGER' | 'POINTER_TO_REAL' | 'POINTER_TO_CHAR' | 'VOID_POINTER';
 
 // AST Node types
 export type ASTNode =
@@ -49,6 +50,7 @@ export type ASTNode =
   | CloseFileNode
   | ReadFileNode
   | WriteFileNode
+  | MemoryFreeNode
   | ExpressionNode;
 
 export type ExpressionNode =
@@ -57,7 +59,12 @@ export type ExpressionNode =
   | LiteralNode
   | IdentifierNode
   | ArrayAccessNode
-  | FunctionCallNode;
+  | FunctionCallNode
+  | AddressOfNode
+  | DereferenceNode
+  | PointerCastNode
+  | MemoryAllocationNode
+  | SizeOfNode;
 
 export interface BaseNode {
   type: string;
@@ -225,6 +232,40 @@ export interface FunctionCallNode extends BaseNode {
   arguments: ExpressionNode[];
 }
 
+// Pointer operation nodes
+export interface AddressOfNode extends BaseNode {
+  type: 'AddressOf';
+  target: IdentifierNode;
+}
+
+export interface DereferenceNode extends BaseNode {
+  type: 'Dereference';
+  pointer: ExpressionNode;
+}
+
+export interface PointerCastNode extends BaseNode {
+  type: 'PointerCast';
+  targetType: DataType;
+  expression: ExpressionNode;
+}
+
+export interface MemoryAllocationNode extends BaseNode {
+  type: 'MemoryAllocation';
+  size: ExpressionNode;
+  targetType: DataType;
+}
+
+export interface SizeOfNode extends BaseNode {
+  type: 'SizeOf';
+  dataType: DataType;
+}
+
+// Memory management statement node
+export interface MemoryFreeNode extends BaseNode {
+  type: 'MemoryFree';
+  pointer: ExpressionNode;
+}
+
 // Runtime types
 export interface Variable {
   type: DataType;
@@ -232,6 +273,15 @@ export interface Variable {
   dimensions?: Array<{ lower: number; upper: number }>;
   elementType?: DataType;
   initialized: boolean;
+  memoryAddress?: number; // Memory address for low-level variables
+}
+
+export interface MemoryMetadata {
+  address: number;
+  size: number;
+  type: DataType;
+  allocated: boolean;
+  variableName?: string;
 }
 
 export interface ExecutionContext {
@@ -272,4 +322,23 @@ export interface DebuggerYield {
   type: 'output' | 'pause';
   value?: string;
   debugState?: DebugState;
+}
+
+// Memory trace system types
+export interface MemoryTraceEntry {
+  step: number;
+  operation: 'DECLARE' | 'WRITE' | 'READ' | 'ALLOCATE' | 'FREE' | 'ADDRESS_OF' | 'DEREFERENCE' | 'POINTER_ASSIGN';
+  line: number;
+  address?: number;
+  value?: any;
+  variable?: string;
+  pointerAddress?: number;
+  metadata?: any;
+  timestamp: number;
+}
+
+export interface MemoryState {
+  variableAddresses: Map<string, number>;
+  allocations: Array<{ address: number; size: number; type: string; variable?: string }>;
+  trace: MemoryTraceEntry[];
 }

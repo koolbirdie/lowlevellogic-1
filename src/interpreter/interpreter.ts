@@ -23,18 +23,25 @@ import {
   CloseFileNode,
   ReadFileNode,
   WriteFileNode,
+  MemoryFreeNode,
   LiteralNode,
   IdentifierNode,
   ArrayAccessNode,
   FunctionCallNode,
   BinaryOpNode,
   UnaryOpNode,
+  AddressOfNode,
+  DereferenceNode,
+  MemoryAllocationNode,
+  SizeOfNode,
   ExecutionContext,
   Variable,
   RuntimeError,
   CallStackFrame,
   DebugState
 } from './types';
+
+import { MemoryEngine } from './memory';
 
 const MAX_ITERATIONS = 10000;
 const MAX_RECURSION_DEPTH = 1000;
@@ -60,6 +67,8 @@ export class Interpreter {
   private fileHandles: Map<string, FileHandle> = new Map();
   private fileWriteOutput: boolean;
   private fileUploadHandler?: (filename: string) => Promise<string>;
+  private memory: MemoryEngine;
+  private variableAddresses: Map<string, number>;
 
   constructor(
     inputHandler?: (variableName: string, variableType: string) => Promise<string>,
@@ -79,6 +88,8 @@ export class Interpreter {
     this.stepCallback = stepCallback;
     this.fileWriteOutput = fileWriteOutput;
     this.fileUploadHandler = fileUploadHandler;
+    this.memory = new MemoryEngine();
+    this.variableAddresses = new Map();
   }
 
   private defaultInputHandler(variableName: string): Promise<string> {
@@ -97,6 +108,15 @@ export class Interpreter {
 
   public disableDebugMode(): void {
     this.debugMode = false;
+  }
+
+  // Memory system getters for UI access
+  public getMemoryEngine(): MemoryEngine {
+    return this.memory;
+  }
+
+  public getVariableAddresses(): Map<string, number> {
+    return new Map(this.variableAddresses);
   }
 
   public getFileContent(filename: string): string | null {
@@ -204,6 +224,9 @@ export class Interpreter {
       case 'WriteFile':
         yield* this.executeWriteFile(node as WriteFileNode, context);
         break;
+      case 'MemoryFree':
+        yield* this.executeMemoryFree(node as MemoryFreeNode, context);
+        break;
       default:
         throw new RuntimeError(`Unknown node type: ${node.type}`, node.line);
     }
@@ -219,11 +242,46 @@ export class Interpreter {
         elementType: node.arrayElementType,
         initialized: false
       });
-    } else {
+    } else if (node.dataType.startsWith('POINTER_TO')) {
+      // Handle pointer types - allocate memory for storing address
+      const address = this.memory.allocate(1, node.dataType);
+      this.variableAddresses.set(node.identifier, address);
       context.variables.set(node.identifier, {
         type: node.dataType,
-        value: undefined,
-        initialized: false
+        value: 0, // Initialize to null pointer (address 0)
+        initialized: true,
+        memoryAddress: address
+      });
+    } else {
+      // Handle regular variables with memory allocation
+      const size = this.memory.getTypeSize(node.dataType);
+      const address = this.memory.allocate(size, node.dataType);
+      this.variableAddresses.set(node.identifier, address);
+
+      // Initialize with default value
+      let defaultValue: any;
+      switch (node.dataType) {
+        case 'INTEGER':
+        case 'REAL':
+          defaultValue = 0;
+          break;
+        case 'BOOLEAN':
+          defaultValue = false;
+          break;
+        case 'STRING':
+        case 'CHAR':
+          defaultValue = '';
+          break;
+        default:
+          defaultValue = undefined;
+      }
+
+      this.memory.write(address, defaultValue);
+      context.variables.set(node.identifier, {
+        type: node.dataType,
+        value: defaultValue,
+        initialized: true,
+        memoryAddress: address
       });
     }
   }
@@ -259,6 +317,11 @@ export class Interpreter {
 
       variable.value = value;
       variable.initialized = true;
+
+      // Update memory if variable has a memory address
+      if (variable.memoryAddress !== undefined) {
+        this.memory.write(variable.memoryAddress, value);
+      }
     } else if (node.target.type === 'ArrayAccess') {
       const arrayAccess = node.target as ArrayAccessNode;
       const variable = this.getVariable(arrayAccess.array, context);
@@ -280,6 +343,16 @@ export class Interpreter {
       });
 
       this.setArrayElement(variable.value, indices, value, variable.dimensions!, node.line);
+    } else if ((node.target as any).type === 'Dereference') {
+      // Handle assignment through pointer dereference (*ptr = value)
+      const derefNode = node.target as DereferenceNode;
+      const pointerAddress = this.evaluateExpression(derefNode.pointer, context);
+
+      if (typeof pointerAddress !== 'number') {
+        throw new RuntimeError(`Dereference requires pointer address`, node.line);
+      }
+
+      this.memory.write(pointerAddress, value);
     }
   }
 
@@ -774,6 +847,25 @@ export class Interpreter {
     }
   }
 
+  private async* executeMemoryFree(node: MemoryFreeNode, context: ExecutionContext): AsyncGenerator<string, void, unknown> {
+    const pointerAddress = this.evaluateExpression(node.pointer, context);
+
+    if (typeof pointerAddress !== 'number') {
+      throw new RuntimeError(`FREE requires pointer address`, node.line);
+    }
+
+    if (pointerAddress === 0) {
+      throw new RuntimeError(`Cannot free null pointer`, node.line);
+    }
+
+    try {
+      this.memory.free(pointerAddress);
+      yield `Freed memory at address 0x${pointerAddress.toString(16).toUpperCase()}`;
+    } catch (error) {
+      throw new RuntimeError(`Memory free error: ${(error as Error).message}`, node.line);
+    }
+  }
+
   private async* executeProcedure(
     procedure: ProcedureNode,
     args: ExpressionNode[],
@@ -936,12 +1028,12 @@ export class Interpreter {
     }
   }
 
-  private executeSyncAssignment(node: AssignmentNode, context: ExecutionContext): void {
-    const value = this.evaluateExpression(node.value, context);
+  private executeSyncAssignment(node: AssignmentNode, _context: ExecutionContext): void {
+    const value = this.evaluateExpression(node.value, _context);
 
     if (node.target.type === 'Identifier') {
       const varName = (node.target as IdentifierNode).name;
-      const variable = this.getVariable(varName, context);
+      const variable = this.getVariable(varName, _context);
 
       if (!variable) {
         throw new RuntimeError(`Variable '${varName}' not declared`, node.line);
@@ -951,7 +1043,7 @@ export class Interpreter {
       variable.initialized = true;
     } else if (node.target.type === 'ArrayAccess') {
       const arrayAccess = node.target as ArrayAccessNode;
-      const variable = this.getVariable(arrayAccess.array, context);
+      const variable = this.getVariable(arrayAccess.array, _context);
 
       if (!variable) {
         throw new RuntimeError(`Array '${arrayAccess.array}' not declared`, node.line);
@@ -962,7 +1054,7 @@ export class Interpreter {
       }
 
       const indices = arrayAccess.indices.map(idx => {
-        const val = this.evaluateExpression(idx, context);
+        const val = this.evaluateExpression(idx, _context);
         if (typeof val !== 'number') {
           throw new RuntimeError(`Array index must be a number`, node.line);
         }
@@ -1132,7 +1224,12 @@ export class Interpreter {
   private evaluateExpression(expr: ExpressionNode, context: ExecutionContext): any {
     switch (expr.type) {
       case 'Literal':
-        return (expr as LiteralNode).value;
+        const literal = expr as LiteralNode;
+        // Handle hex literals
+        if (typeof literal.value === 'string' && literal.value.startsWith('0x')) {
+          return parseInt(literal.value, 16);
+        }
+        return literal.value;
 
       case 'Identifier':
         return this.evaluateIdentifier(expr as IdentifierNode, context);
@@ -1149,6 +1246,18 @@ export class Interpreter {
       case 'FunctionCall':
         return this.evaluateFunctionCall(expr as FunctionCallNode, context);
 
+      case 'AddressOf':
+        return this.evaluateAddressOf(expr as AddressOfNode, context);
+
+      case 'Dereference':
+        return this.evaluateDereference(expr as DereferenceNode, context);
+
+      case 'MemoryAllocation':
+        return this.evaluateMemoryAllocation(expr as MemoryAllocationNode, context);
+
+      case 'SizeOf':
+        return this.evaluateSizeOf(expr as SizeOfNode, context);
+
       default:
         // This should never happen due to exhaustive checking above
         throw new RuntimeError(`Unknown expression type: ${(expr as any).type}`, (expr as any).line);
@@ -1164,6 +1273,15 @@ export class Interpreter {
 
     if (!variable.initialized) {
       throw new RuntimeError(`Variable '${node.name}' used before assignment`, node.line);
+    }
+
+    // Read from memory if variable has a memory address
+    if (variable.memoryAddress !== undefined) {
+      try {
+        return this.memory.read(variable.memoryAddress);
+      } catch (error) {
+        throw new RuntimeError(`Memory read error for variable '${node.name}': ${(error as Error).message}`, node.line);
+      }
     }
 
     return variable.value;
@@ -1365,6 +1483,45 @@ export class Interpreter {
     }
 
     throw new RuntimeError(`Function '${node.name}' not found`, node.line);
+  }
+
+  private evaluateAddressOf(node: AddressOfNode, _context: ExecutionContext): number {
+    const address = this.variableAddresses.get(node.target.name);
+    if (address === undefined) {
+      throw new RuntimeError(`Variable '${node.target.name}' not found in memory`, node.line);
+    }
+    return address;
+  }
+
+  private evaluateDereference(node: DereferenceNode, context: ExecutionContext): any {
+    const pointerAddress = this.evaluateExpression(node.pointer, context);
+    if (typeof pointerAddress !== 'number') {
+      throw new RuntimeError(`Dereference requires pointer address`, node.line);
+    }
+
+    try {
+      return this.memory.read(pointerAddress);
+    } catch (error) {
+      throw new RuntimeError(`Memory read error at address 0x${pointerAddress.toString(16).toUpperCase()}: ${(error as Error).message}`, node.line);
+    }
+  }
+
+  private evaluateMemoryAllocation(node: MemoryAllocationNode, context: ExecutionContext): number {
+    const size = this.evaluateExpression(node.size, context);
+    if (typeof size !== 'number' || size <= 0) {
+      throw new RuntimeError(`MALLOC requires positive size`, node.line);
+    }
+
+    try {
+      const address = this.memory.allocate(size, node.targetType);
+      return address;
+    } catch (error) {
+      throw new RuntimeError(`Memory allocation error: ${(error as Error).message}`, node.line);
+    }
+  }
+
+  private evaluateSizeOf(node: SizeOfNode, _context: ExecutionContext): number {
+    return this.memory.getTypeSize(node.dataType);
   }
 
   private evaluateBuiltInFunction(name: string, args: ExpressionNode[], context: ExecutionContext, line: number): any {

@@ -1,0 +1,115 @@
+// Test program for memory management features
+// This program tests all pointer operations and memory functions
+
+DECLARE x : INTEGER
+DECLARE y : REAL
+DECLARE ch : CHAR
+DECLARE ptr_int : POINTER_TO_INTEGER
+DECLARE ptr_real : POINTER_TO_REAL
+DECLARE ptr_char : POINTER_TO_CHAR
+DECLARE void_ptr : VOID_POINTER
+
+// Test basic variable assignment
+x <-- 42
+y <-- 3.14
+ch <-- 'A'
+
+OUTPUT "Basic variable assignments:"
+OUTPUT "x = ", x
+OUTPUT "y = ", y
+OUTPUT "ch = ", ch
+OUTPUT ""
+
+// Test address-of operator
+ptr_int <-- &x
+ptr_real <-- &y
+ptr_char <-- &ch
+void_ptr <-- &x
+
+OUTPUT "Address operations:"
+OUTPUT "Address of x: ", ptr_int
+OUTPUT "Address of y: ", ptr_real
+OUTPUT "Address of ch: ", ptr_char
+OUTPUT "Void pointer to x: ", void_ptr
+OUTPUT ""
+
+// Test dereference operations
+OUTPUT "Dereference operations:"
+OUTPUT "Value at ptr_int: ", *ptr_int
+OUTPUT "Value at ptr_real: ", *ptr_real
+OUTPUT "Value at ptr_char: ", *ptr_char
+OUTPUT ""
+
+// Test writing through pointers
+*ptr_int <-- 100
+*ptr_real <-- 2.71
+*ptr_char <-- 'Z'
+
+OUTPUT "After writing through pointers:"
+OUTPUT "x = ", x
+OUTPUT "y = ", y
+OUTPUT "ch = ", ch
+OUTPUT ""
+
+// Test SIZE_OF function
+OUTPUT "Size operations:"
+OUTPUT "SIZE_OF(INTEGER) = ", SIZE_OF(INTEGER)
+OUTPUT "SIZE_OF(REAL) = ", SIZE_OF(REAL)
+OUTPUT "SIZE_OF(CHAR) = ", SIZE_OF(CHAR)
+OUTPUT "SIZE_OF(POINTER_TO_INTEGER) = ", SIZE_OF(POINTER_TO_INTEGER)
+OUTPUT ""
+
+// Test dynamic memory allocation
+DECLARE dynamic_int : POINTER_TO_INTEGER
+DECLARE dynamic_arr : POINTER_TO_INTEGER
+DECLARE i : INTEGER
+
+dynamic_int <-- MALLOC(4)
+dynamic_arr <-- MALLOC(20)  // 5 integers
+
+OUTPUT "Memory allocation:"
+OUTPUT "Dynamic int allocated at: ", dynamic_int
+OUTPUT "Dynamic array allocated at: ", dynamic_arr
+OUTPUT ""
+
+// Write to allocated memory
+*dynamic_int <-- 999
+OUTPUT "Value in dynamic_int: ", *dynamic_int
+
+// Simple array access through pointer arithmetic (conceptual)
+*dynamic_arr <-- 10
+*(dynamic_arr + 4) <-- 50  // Access 5th integer
+OUTPUT "First element: ", *dynamic_arr
+OUTPUT "Fifth element: ", *(dynamic_arr + 4)
+OUTPUT ""
+
+// Test memory deallocation
+FREE(dynamic_int)
+FREE(dynamic_arr)
+OUTPUT "Memory freed successfully"
+OUTPUT ""
+
+// Test array declarations with memory
+DECLARE static_arr : ARRAY[1:3] OF INTEGER
+static_arr[1] <-- 1
+static_arr[2] <-- 2
+static_arr[3] <-- 3
+
+OUTPUT "Static array test:"
+OUTPUT "static_arr[1] = ", static_arr[1]
+OUTPUT "static_arr[2] = ", static_arr[2]
+OUTPUT "static_arr[3] = ", static_arr[3]
+OUTPUT ""
+
+// Test pointer to array element
+ptr_int <-- &static_arr[2]
+OUTPUT "Pointer to static_arr[2]: ", ptr_int
+OUTPUT "Value through pointer: ", *ptr_int
+
+// Modify array through pointer
+*ptr_int <-- 99
+OUTPUT "After modification through pointer:"
+OUTPUT "static_arr[2] = ", static_arr[2]
+
+OUTPUT ""
+OUTPUT "Memory management test completed successfully!"
