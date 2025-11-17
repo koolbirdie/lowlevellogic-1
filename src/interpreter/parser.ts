@@ -1292,6 +1292,11 @@ export class Parser {
       this.advance();
     }
   }
+
+  private isValidDataTypeKeyword(value: string): boolean {
+    return ['INTEGER', 'REAL', 'STRING', 'CHAR', 'BOOLEAN',
+            'POINTER_TO_INTEGER', 'POINTER_TO_REAL', 'POINTER_TO_CHAR', 'VOID_POINTER'].includes(value);
+  }
 }
 
 export function parse(tokens: Token[]): ASTNode[] {
