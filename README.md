@@ -227,6 +227,12 @@ The editor includes **31 comprehensive examples** covering:
 20. **Nested IF Statements** - Complex conditional logic
 21. **Mathematical Operations** - All arithmetic operators including DIV and MOD
 22. **Advanced Examples** - Combining multiple concepts
+23. **Memory Management - Pointers Basics** - Introduction to pointers and addresses
+24. **Dynamic Memory Allocation** - MALLOC and FREE operations
+25. **Memory Sizes & Types** - SIZE_OF function and type information
+26. **Linked List Implementation** - Data structures with pointers
+27. **Binary Tree Traversal** - Tree structures and recursive algorithms
+28. **Advanced Memory Operations** - Complex pointer manipulations
 
 ## 🚀 Quick Start
 
