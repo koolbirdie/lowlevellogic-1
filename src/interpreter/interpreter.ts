@@ -1280,7 +1280,7 @@ export class Interpreter {
       try {
         return this.memory.read(variable.memoryAddress);
       } catch (error) {
-        throw new RuntimeError(`Memory read error for variable '${node.name}': ${error.message}`, node.line);
+        throw new RuntimeError(`Memory read error for variable '${node.name}': ${(error as Error).message}`, node.line);
       }
     }
 
