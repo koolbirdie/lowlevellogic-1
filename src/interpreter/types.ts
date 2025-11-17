@@ -187,7 +187,7 @@ export interface CloseFileNode extends BaseNode {
 export interface ReadFileNode extends BaseNode {
   type: 'ReadFile';
   filename: ExpressionNode;
-  target: IdentifierNode | ArrayAccessNode;
+  target: IdentifierNode | ArrayAccessNode | DereferenceNode;
 }
 
 export interface WriteFileNode extends BaseNode {
