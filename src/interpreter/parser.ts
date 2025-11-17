@@ -782,6 +782,18 @@ export class Parser {
     };
   }
 
+  private parseMemoryFree(): MemoryFreeNode {
+    const line = this.advance().line; // consume FREE
+
+    const pointer = this.parseExpression();
+
+    return {
+      type: 'MemoryFree',
+      pointer,
+      line
+    };
+  }
+
   private parseParameters(): Parameter[] {
     const parameters: Parameter[] = [];
 
