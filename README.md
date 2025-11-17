@@ -7,7 +7,7 @@
 [![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen?style=for-the-badge)](https://pseudocode-runner.netlify.app)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/your-badge-id/deploy-status)](https://pseudocode-runner.netlify.app)
 
-**[🚀 Try it Live](https://pseudocode-runner.netlify.app)** | [📚 Examples](#examples) | [💻 Local Setup](#local-development)
+**[🚀 Try it Live](https://pseudorun.vercel.app)** | [📚 Examples](#examples) | [💻 Local Setup](#local-development)
 
 ---
 
