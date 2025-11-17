@@ -705,8 +705,6 @@ WRITEFILE LogFile, "=== Session Ended ==="
 
 CLOSEFILE LogFile
 
-OUTPUT ""
-OUTPUT "Log file updated successfully"
-OUTPUT "Download activity.log to view all entries"`
+OUTPUT "Memory simulation complete!"
   }
 ];
