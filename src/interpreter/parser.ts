@@ -209,39 +209,51 @@ export class Parser {
   private parseAssignment(): AssignmentNode {
     const line = this.peek().line;
 
-    // Parse target (identifier or array access)
-    let target: IdentifierNode | ArrayAccessNode;
+    // Parse target (identifier, array access, or dereference)
+    let target: IdentifierNode | ArrayAccessNode | DereferenceNode;
 
-    const identifier = this.advance().value;
-
-    if (this.check('LBRACKET')) {
-      // Array access
-      this.advance(); // consume [
-      const indices: ExpressionNode[] = [];
-
-      do {
-        indices.push(this.parseExpression());
-        if (this.check('COMMA')) {
-          this.advance();
-        } else {
-          break;
-        }
-      } while (true);
-
-      this.consume('RBRACKET', 'Expected ] after array indices');
-
+    // Check for dereference operator
+    if (this.check('OPERATOR') && this.peek().value === '*') {
+      this.advance(); // consume *
+      const pointerExpr = this.parsePrimary();
       target = {
-        type: 'ArrayAccess',
-        array: identifier,
-        indices,
+        type: 'Dereference',
+        pointer: pointerExpr,
         line
       };
     } else {
-      target = {
-        type: 'Identifier',
-        name: identifier,
-        line
-      };
+      // Existing identifier/array access logic
+      const identifier = this.advance().value;
+
+      if (this.check('LBRACKET')) {
+        // Array access
+        this.advance(); // consume [
+        const indices: ExpressionNode[] = [];
+
+        do {
+          indices.push(this.parseExpression());
+          if (this.check('COMMA')) {
+            this.advance();
+          } else {
+            break;
+          }
+        } while (true);
+
+        this.consume('RBRACKET', 'Expected ] after array indices');
+
+        target = {
+          type: 'ArrayAccess',
+          array: identifier,
+          indices,
+          line
+        };
+      } else {
+        target = {
+          type: 'Identifier',
+          name: identifier,
+          line
+        };
+      }
     }
 
     this.consume('ASSIGNMENT', 'Expected <- in assignment');
