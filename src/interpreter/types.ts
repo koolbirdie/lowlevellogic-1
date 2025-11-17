@@ -58,7 +58,12 @@ export type ExpressionNode =
   | LiteralNode
   | IdentifierNode
   | ArrayAccessNode
-  | FunctionCallNode;
+  | FunctionCallNode
+  | AddressOfNode
+  | DereferenceNode
+  | PointerCastNode
+  | MemoryAllocationNode
+  | SizeOfNode;
 
 export interface BaseNode {
   type: string;
