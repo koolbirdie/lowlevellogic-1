@@ -10,6 +10,7 @@ import SaveAsModal from './components/SaveAsModal/SaveAsModal';
 import ProgramsLibrary from './components/ProgramsLibrary/ProgramsLibrary';
 import DebugControls from './components/DebugControls/DebugControls';
 import VariablesPanel from './components/VariablesPanel/VariablesPanel';
+import MemoryView from './components/MemoryView/MemoryView';
 import EmailVerificationBanner from './components/EmailVerificationBanner/EmailVerificationBanner';
 import { ShareModal } from './components/ShareModal/ShareModal';
 import { ExportModal } from './components/ExportModal/ExportModal';
