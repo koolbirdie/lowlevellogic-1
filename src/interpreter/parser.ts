@@ -1158,27 +1158,24 @@ export class Parser {
         }
 
         if (name === 'SIZE_OF') {
-          // SIZE_OF expects a type argument
-          if (args.length !== 1) {
-            throw new Error(`SIZE_OF expects exactly 1 argument at line ${token.line}`);
-          }
+          // Parse the type argument manually instead of using parseExpression
+          // This allows us to accept KEYWORD tokens for type names
+          const typeToken = this.peek();
 
-          let typeName: string;
+          if (typeToken.type === 'IDENTIFIER' ||
+              (typeToken.type === 'KEYWORD' && this.isValidDataTypeKeyword(typeToken.value))) {
+            const typeName = typeToken.value;
+            this.advance(); // consume the type token
+            this.consume('RPAREN', 'Expected ) after SIZE_OF argument');
 
-          if (args[0].type === 'Identifier') {
-            typeName = (args[0] as IdentifierNode).name;
-          } else if (args[0].type === 'Literal' && typeof args[0].value === 'string') {
-            // Handle type names passed as string literals
-            typeName = args[0].value;
+            return {
+              type: 'SizeOf',
+              dataType: typeName as DataType,
+              line: token.line
+            };
           } else {
-            throw new Error(`SIZE_OF expects a type identifier at line ${token.line}`);
+            throw new Error(`SIZE_OF expects a valid data type at line ${typeToken.line}`);
           }
-
-          return {
-            type: 'SizeOf',
-            dataType: typeName as DataType,
-            line: token.line
-          };
         }
 
         // Regular function call for INT, REAL, STRING
