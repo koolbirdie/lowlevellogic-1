@@ -1,0 +1,12 @@
+DECLARE x : INTEGER
+DECLARE ptr : POINTER_TO_INTEGER
+
+x <-- 42
+ptr <-- &x
+OUTPUT "x = ", x
+OUTPUT "ptr = ", ptr
+OUTPUT "*ptr = ", *ptr
+
+*ptr <-- 100
+OUTPUT "After *ptr <-- 100:"
+OUTPUT "x = ", x
