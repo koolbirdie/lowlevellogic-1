@@ -1028,8 +1028,8 @@ export class Interpreter {
     }
   }
 
-  private executeSyncAssignment(node: AssignmentNode, context: ExecutionContext): void {
-    const value = this.evaluateExpression(node.value, context);
+  private executeSyncAssignment(node: AssignmentNode, _context: ExecutionContext): void {
+    const value = this.evaluateExpression(node.value, _context);
 
     if (node.target.type === 'Identifier') {
       const varName = (node.target as IdentifierNode).name;
