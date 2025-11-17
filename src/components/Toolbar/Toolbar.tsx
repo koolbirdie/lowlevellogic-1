@@ -123,6 +123,14 @@ export default function Toolbar({
         🐛 Debug
       </button>
 
+      <button
+        className={styles.secondaryButton}
+        onClick={onToggleMemoryView}
+        title="Toggle Memory View"
+      >
+        💾 Memory
+      </button>
+
       <button className={styles.secondaryButton} onClick={onClear}>
         Clear
       </button>
