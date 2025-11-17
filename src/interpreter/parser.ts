@@ -850,6 +850,11 @@ export class Parser {
       return 'ARRAY' as DataType;
     }
 
+    // Pointer types
+    if (['POINTER_TO_INTEGER', 'POINTER_TO_REAL', 'POINTER_TO_CHAR', 'VOID_POINTER'].includes(type)) {
+      return type as DataType;
+    }
+
     throw new Error(`Invalid data type '${type}' at line ${token.line}`);
   }
 
