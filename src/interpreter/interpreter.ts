@@ -317,6 +317,11 @@ export class Interpreter {
 
       variable.value = value;
       variable.initialized = true;
+
+      // Update memory if variable has a memory address
+      if (variable.memoryAddress !== undefined) {
+        this.memory.write(variable.memoryAddress, value);
+      }
     } else if (node.target.type === 'ArrayAccess') {
       const arrayAccess = node.target as ArrayAccessNode;
       const variable = this.getVariable(arrayAccess.array, context);
@@ -338,6 +343,16 @@ export class Interpreter {
       });
 
       this.setArrayElement(variable.value, indices, value, variable.dimensions!, node.line);
+    } else if (node.target.type === 'Dereference') {
+      // Handle assignment through pointer dereference (*ptr = value)
+      const derefNode = node.target as any;
+      const pointerAddress = this.evaluateExpression(derefNode.pointer, context);
+
+      if (typeof pointerAddress !== 'number') {
+        throw new RuntimeError(`Dereference requires pointer address`, node.line);
+      }
+
+      this.memory.write(pointerAddress, value);
     }
   }
 
