@@ -330,12 +330,20 @@ npm run preview
 3. **INPUT prompts** appear as browser dialogs
 4. **Errors** show in the error panel with line numbers
 
+### Memory Debugging (NEW!)
+
+1. **Press "M" key** or click the memory button to toggle memory view
+2. **Variables Tab** - See all variables with addresses and values
+3. **Memory Dump Tab** - View raw memory in hexadecimal format
+4. **Trace Log Tab** - See complete memory operation history
+5. **Real-time updates** - Memory view updates during execution
+
 ### Managing Code
 
 - **Clear** - Remove all code (with confirmation)
 - **Download** - Save code as timestamped .txt file
 - **Upload** - Load code from .txt file
-- **Examples** - Load any of 15 sample programs
+- **Examples** - Load any of 22 sample programs
 
 ### Learning Features
 
@@ -343,6 +351,7 @@ npm run preview
 - **Detailed error messages** - Understand what went wrong
 - **Line number references** - Jump directly to problems
 - **Example programs** - Learn by studying working code
+- **Memory visualization** - Understand how memory works
 
 ## 🎯 IGCSE/A-LEVELS Compliance
 
