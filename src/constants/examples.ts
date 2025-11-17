@@ -705,6 +705,359 @@ WRITEFILE LogFile, "=== Session Ended ==="
 
 CLOSEFILE LogFile
 
-OUTPUT "Memory simulation complete!"
+OUTPUT ""
+OUTPUT "Log file updated successfully"
+OUTPUT "Download activity.log to view all entries"`
+  },
+  {
+    title: 'Memory Management - Pointers Basics',
+    code: `// Introduction to pointers and memory addresses
+DECLARE x, y : INTEGER
+DECLARE intPtr, anotherPtr : POINTER_TO_INTEGER
+
+// Initialize variables
+x <-- 42
+y <-- 99
+
+// Get addresses of variables
+intPtr <-- &x
+anotherPtr <-- &y
+
+OUTPUT "=== Pointer Basics Demo ==="
+OUTPUT "x = ", x, " at address ", intPtr
+OUTPUT "y = ", y, " at address ", anotherPtr
+
+// Read values through pointers
+OUTPUT "Reading through pointers:"
+OUTPUT "*intPtr = ", *intPtr
+OUTPUT "*anotherPtr = ", *anotherPtr
+
+// Modify values through pointers
+OUTPUT "Modifying through pointers:"
+*intPtr <-- 100
+*anotherPtr <-- 200
+
+OUTPUT "After modification:"
+OUTPUT "x = ", x
+OUTPUT "y = ", y
+
+// Pointer assignment (anotherPtr now points to x)
+anotherPtr <-- intPtr
+OUTPUT "anotherPtr now points to x"
+OUTPUT "*anotherPtr = ", *anotherPtr`
+  },
+  {
+    title: 'Dynamic Memory Allocation',
+    code: `// MALLOC and FREE operations
+DECLARE dynamicArray : POINTER_TO_INTEGER
+DECLARE stringMemory : POINTER_TO_CHAR
+DECLARE generalPtr : VOID_POINTER
+DECLARE i, arraySize, elementSize : INTEGER
+
+OUTPUT "=== Dynamic Memory Allocation Demo ==="
+
+// Get size information
+arraySize <-- 5
+elementSize <-- SIZE_OF(INTEGER)
+OUTPUT "Size of INTEGER: ", elementSize, " bytes"
+OUTPUT "Allocating array for ", arraySize, " integers"
+
+// Allocate memory for integer array
+dynamicArray <-- MALLOC(elementSize * arraySize)
+
+OUTPUT "Dynamic array allocated at address: ", dynamicArray
+
+// Fill the dynamic array
+OUTPUT "Filling array with values:"
+FOR i <-- 0 TO arraySize - 1
+    *(dynamicArray + (i * elementSize)) <-- (i + 1) * 10
+    OUTPUT "Element ", i, ": ", *(dynamicArray + (i * elementSize))
+NEXT i
+
+// Allocate memory for string
+stringMemory <-- MALLOC(20)  // 20 characters
+OUTPUT "String memory allocated at: ", stringMemory
+
+// Use generic pointer
+generalPtr <-- dynamicArray
+OUTPUT "Generic pointer points to: ", generalPtr
+
+// Clean up - deallocate memory
+OUTPUT "Deallocating memory..."
+FREE(dynamicArray)
+FREE(stringMemory)
+
+OUTPUT "Memory deallocation complete"`
+  },
+  {
+    title: 'Memory Sizes & Types',
+    code: `// SIZE_OF function and type information
+DECLARE intSize, realSize, charSize, boolSize : INTEGER
+DECLARE intPtrSize, realPtrSize, charPtrSize, voidPtrSize : INTEGER
+DECLARE totalMemory : INTEGER
+
+OUTPUT "=== Memory Sizes Demo ==="
+
+// Basic data type sizes
+intSize <-- SIZE_OF(INTEGER)
+realSize <-- SIZE_OF(REAL)
+charSize <-- SIZE_OF(CHAR)
+boolSize <-- SIZE_OF(BOOLEAN)
+
+OUTPUT "Data Type Sizes:"
+OUTPUT "INTEGER: ", intSize, " bytes"
+OUTPUT "REAL: ", realSize, " bytes"
+OUTPUT "CHAR: ", charSize, " bytes"
+OUTPUT "BOOLEAN: ", boolSize, " bytes"
+
+// Pointer type sizes
+intPtrSize <-- SIZE_OF(POINTER_TO_INTEGER)
+realPtrSize <-- SIZE_OF(POINTER_TO_REAL)
+charPtrSize <-- SIZE_OF(POINTER_TO_CHAR)
+voidPtrSize <-- SIZE_OF(VOID_POINTER)
+
+OUTPUT ""
+OUTPUT "Pointer Type Sizes:"
+OUTPUT "POINTER_TO_INTEGER: ", intPtrSize, " bytes"
+OUTPUT "POINTER_TO_REAL: ", realPtrSize, " bytes"
+OUTPUT "POINTER_TO_CHAR: ", charPtrSize, " bytes"
+OUTPUT "VOID_POINTER: ", voidPtrSize, " bytes"
+
+// Calculate memory requirements
+totalMemory <-- intSize + realSize + charSize + intPtrSize
+OUTPUT ""
+OUTPUT "Total memory for sample structure: ", totalMemory, " bytes"
+
+// Demonstrate hexadecimal addresses
+DECLARE variables : ARRAY[1:4] OF INTEGER
+DECLARE address : POINTER_TO_INTEGER
+variables[1] <-- 100
+variables[2] <-- 200
+variables[3] <-- 300
+variables[4] <-- 400
+
+OUTPUT ""
+OUTPUT "Array element addresses:"
+address <-- &variables[1]
+OUTPUT "variables[1] at: ", address, " value: ", *address
+address <-- &variables[2]
+OUTPUT "variables[2] at: ", address, " value: ", *address
+address <-- &variables[3]
+OUTPUT "variables[3] at: ", address, " value: ", *address
+address <-- &variables[4]
+OUTPUT "variables[4] at: ", address, " value: ", *address`
+  },
+  {
+    title: 'Linked List Implementation',
+    code: `// Simple linked list using static arrays and pointers
+DECLARE data : ARRAY[1:6] OF INTEGER
+DECLARE nextNode : ARRAY[1:6] OF INTEGER
+DECLARE head, current, temp : POINTER_TO_INTEGER
+DECLARE i, nodeIndex : INTEGER
+
+OUTPUT "=== Linked List Demo ==="
+
+// Initialize linked list nodes (simplified static implementation)
+data[1] <-- 10; nextNode[1] <-- 2
+data[2] <-- 20; nextNode[2] <-- 3
+data[3] <-- 30; nextNode[3] <-- 4
+data[4] <-- 40; nextNode[4] <-- 5
+data[5] <-- 50; nextNode[5] <-- 0  // NULL pointer
+data[6] <-- 0; nextNode[6] <-- 0  // Empty node
+
+// Set head pointer to first node
+head <-- &data[1]
+OUTPUT "List created, head points to address: ", head
+
+// Traverse the list
+OUTPUT ""
+OUTPUT "Traversing linked list:"
+current <-- head
+nodeIndex <-- 1
+
+WHILE current <> 0 AND nodeIndex <= 5 DO
+    OUTPUT "Node ", nodeIndex, ": value = ", *current, " next = ", nextNode[nodeIndex]
+
+    // Move to next node
+    IF nextNode[nodeIndex] <> 0 THEN
+        current <-- &data[nextNode[nodeIndex]]
+        nodeIndex <-- nextNode[nodeIndex]
+    ELSE
+        current <-- 0  // End of list
+    ENDIF
+ENDWHILE
+
+// Demonstrate inserting a node (at beginning)
+OUTPUT ""
+OUTPUT "Inserting new node at beginning:"
+data[6] <-- 5; nextNode[6] <-- 1
+head <-- &data[6]
+
+// Traverse again to show insertion
+OUTPUT "List after insertion:"
+current <-- head
+nodeIndex <-- 6
+
+WHILE current <> 0 AND nodeIndex <= 6 DO
+    OUTPUT "Node ", nodeIndex, ": value = ", *current, " next = ", nextNode[nodeIndex]
+
+    IF nextNode[nodeIndex] <> 0 AND nextNode[nodeIndex] <= 6 THEN
+        current <-- &data[nextNode[nodeIndex]]
+        nodeIndex <-- nextNode[nodeIndex]
+    ELSE
+        current <-- 0
+    ENDIF
+ENDWHILE`
+  },
+  {
+    title: 'Binary Tree Traversal',
+    code: `// Binary tree with pointer-like traversal
+DECLARE treeData : ARRAY[1:7] OF INTEGER
+DECLARE leftChild : ARRAY[1:7] OF INTEGER
+DECLARE rightChild : ARRAY[1:7] OF INTEGER
+DECLARE root, current : POINTER_TO_INTEGER
+DECLARE i : INTEGER
+
+OUTPUT "=== Binary Tree Demo ==="
+
+// Initialize binary tree
+treeData[1] <-- 50; leftChild[1] <-- 2; rightChild[1] <-- 3
+treeData[2] <-- 30; leftChild[2] <-- 4; rightChild[2] <-- 5
+treeData[3] <-- 70; leftChild[3] <-- 6; rightChild[3] <-- 7
+treeData[4] <-- 20; leftChild[4] <-- 0; rightChild[4] <-- 0
+treeData[5] <-- 40; leftChild[5] <-- 0; rightChild[5] <-- 0
+treeData[6] <-- 60; leftChild[6] <-- 0; rightChild[6] <-- 0
+treeData[7] <-- 80; leftChild[7] <-- 0; rightChild[7] <-- 0
+
+OUTPUT "Binary tree structure:"
+OUTPUT "        50"
+OUTPUT "       /  \\"
+OUTPUT "     30    70"
+OUTPUT "    / \\   / \\"
+OUTPUT "  20 40 60 80"
+
+// Set root pointer
+root <-- &treeData[1]
+OUTPUT "Root pointer: ", root, " value: ", *root
+
+// Traversal procedures (simplified in this environment)
+PROCEDURE InOrderTraversal(nodePtr : POINTER_TO_INTEGER, nodeNum : INTEGER)
+    IF nodePtr = 0 OR nodeNum = 0 THEN
+        RETURN
+    ENDIF
+
+    // Traverse left subtree
+    IF leftChild[nodeNum] <> 0 THEN
+        InOrderTraversal(&treeData[leftChild[nodeNum]], leftChild[nodeNum])
+    ENDIF
+
+    // Visit current node
+    OUTPUT *nodePtr
+
+    // Traverse right subtree
+    IF rightChild[nodeNum] <> 0 THEN
+        InOrderTraversal(&treeData[rightChild[nodeNum]], rightChild[nodeNum])
+    ENDIF
+ENDPROCEDURE
+
+OUTPUT ""
+OUTPUT "In-order traversal (Left, Root, Right):"
+CALL InOrderTraversal(root, 1)
+
+OUTPUT ""
+OUTPUT "Tree traversal complete!"
+OUTPUT "Press 'M' to see memory addresses of tree nodes"`
+  },
+  {
+    title: 'Advanced Memory Operations',
+    code: `// Advanced pointer operations and memory management
+DECLARE numbers : ARRAY[1:8] OF INTEGER
+DECLARE letters : ARRAY[1:4] OF CHAR
+DECLARE intPtr, charPtr, voidPtr : POINTER_TO_INTEGER, POINTER_TO_CHAR, VOID_POINTER
+DECLARE tempInt : INTEGER
+DECLARE tempChar : CHAR
+DECLARE i, offset : INTEGER
+
+OUTPUT "=== Advanced Memory Operations Demo ==="
+
+// Initialize arrays
+FOR i <-- 1 TO 8
+    numbers[i] <-- i * 10
+NEXT i
+
+letters[1] <-- 'A'
+letters[2] <-- 'B'
+letters[3] <-- 'C'
+letters[4] <-- 'D'
+
+OUTPUT "Initialized data:"
+OUTPUT "Numbers: ", numbers[1], " ", numbers[2], " ", numbers[3], " ", numbers[4]
+OUTPUT "Letters: ", letters[1], " ", letters[2], " ", letters[3], " ", letters[4]
+
+// Pointer operations with different types
+intPtr <-- &numbers[3]
+charPtr <-- &letters[2]
+voidPtr <-- &numbers[5]
+
+OUTPUT ""
+OUTPUT "Pointer operations:"
+OUTPUT "intPtr points to numbers[3]: ", intPtr, " value: ", *intPtr
+OUTPUT "charPtr points to letters[2]: ", charPtr, " value: ", *charPtr
+OUTPUT "voidPtr points to numbers[5]: ", voidPtr
+
+// Pointer arithmetic (simplified)
+OUTPUT ""
+OUTPUT "Pointer arithmetic:"
+OUTPUT "Current *intPtr: ", *intPtr
+OUTPUT "Moving to next element..."
+
+// Simulate pointer arithmetic (conceptual)
+offset <-- SIZE_OF(INTEGER)
+OUTPUT "Size of INTEGER: ", offset, " bytes"
+OUTPUT "Next element address would be: ", intPtr + offset
+
+// Memory swap using pointers
+intPtr <-- &numbers[1]
+OUTPUT ""
+OUTPUT "Before swap: numbers[1] = ", *intPtr
+tempInt <-- *intPtr
+*intPtr <-- numbers[8]
+OUTPUT "After swap: numbers[1] = ", *intPtr
+
+// Character manipulation
+charPtr <-- &letters[1]
+OUTPUT ""
+OUTPUT "Before: letters[1] = ", *charPtr
+tempChar <-- *charPtr
+*charPtr <-- 'Z'
+OUTPUT "After: letters[1] = ", *charPtr
+
+// Demonstrating memory layout
+OUTPUT ""
+OUTPUT "Memory layout information:"
+intPtr <-- &numbers[1]
+OUTPUT "Array 'numbers' starts at: ", intPtr
+
+charPtr <-- &letters[1]
+OUTPUT "Array 'letters' starts at: ", charPtr
+
+// Multiple pointers to same data
+intPtr <-- &numbers[4]
+DECLARE anotherPtr : POINTER_TO_INTEGER
+anotherPtr <-- intPtr
+
+OUTPUT ""
+OUTPUT "Multiple pointers to same data:"
+OUTPUT "intPtr: ", intPtr, " value: ", *intPtr
+OUTPUT "anotherPtr: ", anotherPtr, " value: ", *anotherPtr
+
+*intPtr <-- 999
+OUTPUT "After modifying through intPtr:"
+OUTPUT "*intPtr: ", *intPtr
+OUTPUT "*anotherPtr: ", *anotherPtr
+OUTPUT "numbers[4]: ", numbers[4]
+
+OUTPUT ""
+OUTPUT "Advanced memory operations complete!"`
   }
 ];

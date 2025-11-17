@@ -26,7 +26,7 @@
 - ✅ **Error Detection** - Detailed syntax and runtime error messages with line numbers
 - ✅ **Auto-save** - Code persists in browser LocalStorage
 - ✅ **File Operations** - Download/upload code as .txt files
-- ✅ **22 Built-in Examples** - Learn from comprehensive sample programs
+- ✅ **31 Built-in Examples** - Learn from comprehensive sample programs including 6 memory management examples
 - ✅ **Responsive Design** - Works on desktop, tablet, and mobile
 - ✅ **User Authentication** - Secure login with Google or Email/Password
 - ✅ **Guest Mode** - Try all features without signing up!
@@ -203,7 +203,7 @@ OUTPUT address         // Displays: 4096
 
 ## 📚 Examples
 
-The editor includes **22 comprehensive examples** covering:
+The editor includes **31 comprehensive examples** covering:
 
 1. **Basic Input/Output** - Simple I/O operations
 2. **IF Statement** - Grade calculator with multiple conditions
@@ -227,6 +227,12 @@ The editor includes **22 comprehensive examples** covering:
 20. **Nested IF Statements** - Complex conditional logic
 21. **Mathematical Operations** - All arithmetic operators including DIV and MOD
 22. **Advanced Examples** - Combining multiple concepts
+23. **Memory Management - Pointers Basics** - Introduction to pointers and addresses
+24. **Dynamic Memory Allocation** - MALLOC and FREE operations
+25. **Memory Sizes & Types** - SIZE_OF function and type information
+26. **Linked List Implementation** - Data structures with pointers
+27. **Binary Tree Traversal** - Tree structures and recursive algorithms
+28. **Advanced Memory Operations** - Complex pointer manipulations
 
 ## 🚀 Quick Start
 
