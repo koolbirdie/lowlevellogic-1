@@ -28,6 +28,10 @@ import {
   LiteralNode,
   IdentifierNode,
   ArrayAccessNode,
+  AddressOfNode,
+  DereferenceNode,
+  MemoryAllocationNode,
+  SizeOfNode,
   FunctionCallNode,
   DataType,
   Parameter
