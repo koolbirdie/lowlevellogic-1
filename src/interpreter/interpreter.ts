@@ -110,6 +110,15 @@ export class Interpreter {
     this.debugMode = false;
   }
 
+  // Memory system getters for UI access
+  public getMemoryEngine(): MemoryEngine {
+    return this.memory;
+  }
+
+  public getVariableAddresses(): Map<string, number> {
+    return new Map(this.variableAddresses);
+  }
+
   public getFileContent(filename: string): string | null {
     const fileHandle = this.fileHandles.get(filename);
     if (!fileHandle) {
