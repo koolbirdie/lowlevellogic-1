@@ -171,6 +171,7 @@ OUTPUT address         // Displays: 4096
 **Comparison:** `=` `<>` `<` `>` `<=` `>=`
 **Logical:** `AND` `OR` `NOT`
 **String:** `&` (concatenation)
+**Memory:** `&` (address-of), `*` (dereference)
 **Assignment:** `<--` or `←`
 
 ### 📚 Built-in Functions
