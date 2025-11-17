@@ -1270,6 +1270,15 @@ export class Interpreter {
       throw new RuntimeError(`Variable '${node.name}' used before assignment`, node.line);
     }
 
+    // Read from memory if variable has a memory address
+    if (variable.memoryAddress !== undefined) {
+      try {
+        return this.memory.read(variable.memoryAddress);
+      } catch (error) {
+        throw new RuntimeError(`Memory read error for variable '${node.name}': ${error.message}`, node.line);
+      }
+    }
+
     return variable.value;
   }
 
