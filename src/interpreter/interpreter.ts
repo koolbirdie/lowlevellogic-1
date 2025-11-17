@@ -224,6 +224,9 @@ export class Interpreter {
       case 'WriteFile':
         yield* this.executeWriteFile(node as WriteFileNode, context);
         break;
+      case 'MemoryFree':
+        yield* this.executeMemoryFree(node as MemoryFreeNode, context);
+        break;
       default:
         throw new RuntimeError(`Unknown node type: ${node.type}`, node.line);
     }
