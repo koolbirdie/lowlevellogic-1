@@ -323,3 +323,22 @@ export interface DebuggerYield {
   value?: string;
   debugState?: DebugState;
 }
+
+// Memory trace system types
+export interface MemoryTraceEntry {
+  step: number;
+  operation: 'DECLARE' | 'WRITE' | 'READ' | 'ALLOCATE' | 'FREE' | 'ADDRESS_OF' | 'DEREFERENCE' | 'POINTER_ASSIGN';
+  line: number;
+  address?: number;
+  value?: any;
+  variable?: string;
+  pointerAddress?: number;
+  metadata?: any;
+  timestamp: number;
+}
+
+export interface MemoryState {
+  variableAddresses: Map<string, number>;
+  allocations: Array<{ address: number; size: number; type: string; variable?: string }>;
+  trace: MemoryTraceEntry[];
+}
