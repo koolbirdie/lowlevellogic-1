@@ -862,7 +862,7 @@ export class Interpreter {
       this.memory.free(pointerAddress);
       yield `Freed memory at address 0x${pointerAddress.toString(16).toUpperCase()}`;
     } catch (error) {
-      throw new RuntimeError(`Memory free error: ${error.message}`, node.line);
+      throw new RuntimeError(`Memory free error: ${(error as Error).message}`, node.line);
     }
   }
 
