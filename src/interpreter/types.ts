@@ -232,6 +232,40 @@ export interface FunctionCallNode extends BaseNode {
   arguments: ExpressionNode[];
 }
 
+// Pointer operation nodes
+export interface AddressOfNode extends BaseNode {
+  type: 'AddressOf';
+  target: IdentifierNode;
+}
+
+export interface DereferenceNode extends BaseNode {
+  type: 'Dereference';
+  pointer: ExpressionNode;
+}
+
+export interface PointerCastNode extends BaseNode {
+  type: 'PointerCast';
+  targetType: DataType;
+  expression: ExpressionNode;
+}
+
+export interface MemoryAllocationNode extends BaseNode {
+  type: 'MemoryAllocation';
+  size: ExpressionNode;
+  targetType: DataType;
+}
+
+export interface SizeOfNode extends BaseNode {
+  type: 'SizeOf';
+  dataType: DataType;
+}
+
+// Memory management statement node
+export interface MemoryFreeNode extends BaseNode {
+  type: 'MemoryFree';
+  pointer: ExpressionNode;
+}
+
 // Runtime types
 export interface Variable {
   type: DataType;
