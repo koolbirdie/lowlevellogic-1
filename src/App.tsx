@@ -617,9 +617,17 @@ function App() {
               currentLine={debugState.currentLine}
             />
           )}
-          
-          <OutputPanel 
-            output={output} 
+
+          {showMemoryView && interpreterRef.current && (
+            <MemoryView
+              memory={interpreterRef.current.getMemoryEngine()}
+              variableAddresses={interpreterRef.current.getVariableAddresses()}
+              traceLog={memoryTrace}
+            />
+          )}
+
+          <OutputPanel
+            output={output}
             isRunning={isRunning}
             waitingForInput={waitingForInput}
             inputPrompt={inputPrompt}
