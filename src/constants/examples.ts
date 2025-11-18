@@ -1025,7 +1025,9 @@ OUTPUT "In-order sequence: 20, 30, 40, 50, 60, 70, 80"`
     code: `// Advanced pointer operations and memory management
 DECLARE numbers : ARRAY[1:8] OF INTEGER
 DECLARE letters : ARRAY[1:4] OF CHAR
-DECLARE intPtr, charPtr, voidPtr : POINTER_TO_INTEGER, POINTER_TO_CHAR, VOID_POINTER
+DECLARE intPtr : POINTER_TO_INTEGER
+DECLARE charPtr : POINTER_TO_CHAR
+DECLARE voidPtr : VOID_POINTER
 DECLARE tempInt : INTEGER
 DECLARE tempChar : CHAR
 DECLARE i, offset : INTEGER
