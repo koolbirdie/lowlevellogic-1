@@ -617,14 +617,6 @@ export class Interpreter {
     const end = this.evaluateExpression(node.end, context);
     const step = this.evaluateExpression(node.step, context);
 
-    // DEBUG: Output FOR loop parameters
-    console.log(`=== FOR DEBUG ===`);
-    console.log(`Variable: ${node.variable}`);
-    console.log(`Start: ${start} (type: ${typeof start})`);
-    console.log(`End: ${end} (type: ${typeof end})`);
-    console.log(`Step: ${step} (type: ${typeof step})`);
-    console.log(`==================`);
-
     if (typeof start !== 'number' || typeof end !== 'number' || typeof step !== 'number') {
       throw new RuntimeError(`FOR loop bounds must be numbers`, node.line);
     }
