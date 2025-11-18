@@ -1547,11 +1547,41 @@ export class Interpreter {
   }
 
   private evaluateAddressOf(node: AddressOfNode, _context: ExecutionContext): number {
-    const address = this.variableAddresses.get(node.target.name);
-    if (address === undefined) {
-      throw new RuntimeError(`Variable '${node.target.name}' not found in memory`, node.line);
+    if (node.target.type === 'Identifier') {
+      // Simple variable address
+      const address = this.variableAddresses.get(node.target.name);
+      if (address === undefined) {
+        throw new RuntimeError(`Variable '${node.target.name}' not found in memory`, node.line);
+      }
+      return address;
+    } else if (node.target.type === 'ArrayAccess') {
+      // Array element address - calculate base address + offset
+      const arrayAccess = node.target as ArrayAccessNode;
+      const baseAddress = this.variableAddresses.get(arrayAccess.array);
+      if (baseAddress === undefined) {
+        throw new RuntimeError(`Array '${arrayAccess.array}' not found in memory`, node.line);
+      }
+
+      // Calculate offset based on array indices
+      // This is a simplified calculation - in practice, you'd need to consider
+      // array bounds, element size, and multi-dimensional arrays
+      const elementSize = this.memory.getTypeSize('INTEGER'); // Assume INTEGER elements
+      let offset = 0;
+
+      if (arrayAccess.indices.length === 1) {
+        const index = this.evaluateExpression(arrayAccess.indices[0], _context);
+        if (typeof index !== 'number') {
+          throw new RuntimeError(`Array index must be a number`, node.line);
+        }
+        offset = index * elementSize;
+      } else {
+        throw new RuntimeError(`Multi-dimensional arrays not supported for address-of operator`, node.line);
+      }
+
+      return baseAddress + offset;
+    } else {
+      throw new RuntimeError(`Invalid address-of target type`, node.line);
     }
-    return address;
   }
 
   private evaluateDereference(node: DereferenceNode, context: ExecutionContext): any {
