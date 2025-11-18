@@ -235,6 +235,21 @@ tokens.forEach((token, index) => {
 });
 
 console.log('');
+parseForLoop(tokens);
+
+console.log('Testing FOR loop with NEXT:');
+console.log('Code:');
+console.log(testCode);
+console.log('');
+
+console.log('=== TOKENIZATION ===');
+const tokens = tokenize(testCode);
+
+tokens.forEach((token, index) => {
+  console.log(`${index}: Type="${token.type}", Value="${token.value}", Line=${token.line}, Column=${token.column}`);
+});
+
+console.log('');
 console.log('=== PARSING ===');
 try {
   const ast = parse(tokens);
