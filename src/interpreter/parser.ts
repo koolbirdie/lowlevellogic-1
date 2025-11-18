@@ -1309,6 +1309,13 @@ export class Parser {
 }
 
 export function parse(tokens: Token[]): ASTNode[] {
+  // DEBUG: Log tokens
+  console.log('=== PARSER DEBUG: Input Tokens ===');
+  tokens.forEach((token, index) => {
+    console.log(`${index}: ${token.type}("${token.value}") at line ${token.line}, col ${token.column}`);
+  });
+  console.log('=== END TOKENS ===\n');
+
   const parser = new Parser(tokens);
   return parser.parse();
 }
