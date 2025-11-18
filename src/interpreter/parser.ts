@@ -150,7 +150,14 @@ export class Parser {
   }
 
   private parseStatement(): ASTNode | null {
+    this.skipNewlines();
+
+    if (this.isAtEnd()) {
+      return null;
+    }
+
     const token = this.peek();
+    console.log(`=== parseStatement DEBUG: Processing ${token.type}("${token.value}") at line ${token.line} ===`);
 
     if (token.type === 'KEYWORD') {
       switch (token.value) {
@@ -189,6 +196,7 @@ export class Parser {
         case 'FREE':
           return this.parseMemoryFree();
         default:
+          console.log(`parseStatement ERROR: Unexpected keyword '${token.value}' at line ${token.line}`);
           throw new Error(`Unexpected keyword '${token.value}' at line ${token.line}`);
       }
     }
@@ -196,13 +204,16 @@ export class Parser {
     // Check for assignment (including dereference assignments)
     if (token.type === 'IDENTIFIER' ||
         (token.type === 'OPERATOR' && token.value === '*')) {
+      console.log(`parseStatement: Found assignment starting with ${token.type}("${token.value}")`);
       return this.parseAssignment();
     }
 
     if (token.type === 'NEWLINE') {
+      console.log(`parseStatement: Skipping newline`);
       return null;
     }
 
+    console.log(`parseStatement ERROR: Unexpected token ${token.type}("${token.value}") at line ${token.line}`);
     throw new Error(`Unexpected token '${token.value}' at line ${token.line}`);
   }
 
