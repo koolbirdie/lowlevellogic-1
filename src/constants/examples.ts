@@ -1034,17 +1034,29 @@ DECLARE i, offset : INTEGER
 
 OUTPUT "=== Advanced Memory Operations Demo ==="
 
-// Initialize arrays
+// Initialize arrays step by step with debug output
+OUTPUT "Initializing numbers array..."
 FOR i <-- 1 TO 8
     numbers[i] <-- i * 10
+    OUTPUT "numbers[", i, "] = ", numbers[i]
 NEXT i
 
-// Initialize character array with ASCII values
+OUTPUT ""
+OUTPUT "Initializing letters array..."
+OUTPUT "Setting letters[1]..."
 letters[1] <-- 65  // ASCII 'A'
+OUTPUT "letters[1] = ", letters[1]
+OUTPUT "Setting letters[2]..."
 letters[2] <-- 66  // ASCII 'B'
+OUTPUT "letters[2] = ", letters[2]
+OUTPUT "Setting letters[3]..."
 letters[3] <-- 67  // ASCII 'C'
+OUTPUT "letters[3] = ", letters[3]
+OUTPUT "Setting letters[4]..."
 letters[4] <-- 68  // ASCII 'D'
+OUTPUT "letters[4] = ", letters[4]
 
+OUTPUT ""
 OUTPUT "Initialized data:"
 OUTPUT "Numbers: ", numbers[1], " ", numbers[2], " ", numbers[3], " ", numbers[4]
 OUTPUT "Letters: ", letters[1], " ", letters[2], " ", letters[3], " ", letters[4]
