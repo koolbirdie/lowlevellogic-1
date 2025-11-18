@@ -928,13 +928,27 @@ DECLARE i : INTEGER
 OUTPUT "=== Binary Tree Demo ==="
 
 // Initialize binary tree
-treeData[1] <-- 50; leftChild[1] <-- 2; rightChild[1] <-- 3
-treeData[2] <-- 30; leftChild[2] <-- 4; rightChild[2] <-- 5
-treeData[3] <-- 70; leftChild[3] <-- 6; rightChild[3] <-- 7
-treeData[4] <-- 20; leftChild[4] <-- 0; rightChild[4] <-- 0
-treeData[5] <-- 40; leftChild[5] <-- 0; rightChild[5] <-- 0
-treeData[6] <-- 60; leftChild[6] <-- 0; rightChild[6] <-- 0
-treeData[7] <-- 80; leftChild[7] <-- 0; rightChild[7] <-- 0
+treeData[1] <-- 50
+leftChild[1] <-- 2
+rightChild[1] <-- 3
+treeData[2] <-- 30
+leftChild[2] <-- 4
+rightChild[2] <-- 5
+treeData[3] <-- 70
+leftChild[3] <-- 6
+rightChild[3] <-- 7
+treeData[4] <-- 20
+leftChild[4] <-- 0
+rightChild[4] <-- 0
+treeData[5] <-- 40
+leftChild[5] <-- 0
+rightChild[5] <-- 0
+treeData[6] <-- 60
+leftChild[6] <-- 0
+rightChild[6] <-- 0
+treeData[7] <-- 80
+leftChild[7] <-- 0
+rightChild[7] <-- 0
 
 OUTPUT "Binary tree structure:"
 OUTPUT "        50"
