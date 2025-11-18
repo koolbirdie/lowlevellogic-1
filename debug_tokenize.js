@@ -236,6 +236,25 @@ tokens.forEach((token, index) => {
 
 console.log('');
 parseForLoop(tokens);
+
+const testCode = `FOR i = 1 TO 5
+    OUTPUT i
+NEXT i`;
+
+console.log('Testing FOR loop with NEXT:');
+console.log('Code:');
+console.log(testCode);
+console.log('');
+
+console.log('=== TOKENIZATION ===');
+const tokens = tokenize(testCode);
+
+tokens.forEach((token, index) => {
+  console.log(`${index}: Type="${token.type}", Value="${token.value}", Line=${token.line}, Column=${token.column}`);
+});
+
+console.log('');
+parseForLoop(tokens);
 console.log('');
 
 console.log('=== TOKENIZATION ===');
