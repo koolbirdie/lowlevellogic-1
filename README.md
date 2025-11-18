@@ -233,6 +233,79 @@ The editor includes **31 comprehensive examples** covering:
 26. **Linked List Implementation** - Data structures with pointers
 27. **Binary Tree Traversal** - Tree structures and recursive algorithms
 28. **Advanced Memory Operations** - Complex pointer manipulations
+29. **Mixed Type Declarations** - Proper variable declaration patterns
+30. **Character Arrays & ASCII** - Working with character data and numeric values
+31. **Array Memory Layout** - Understanding memory addresses of array elements
+
+### 🧠 Memory Management Examples in Detail
+
+**23. Introduction to Pointers and Memory Addresses**
+- Learn the fundamentals of memory addresses and pointers
+- Practice using address-of (`&`) and dereference (`*`) operators
+- Understand how variables are stored in memory
+- Perfect for beginners learning pointer concepts
+
+**24. Dynamic Memory Allocation (MALLOC/FREE)**
+- Master heap memory allocation with `MALLOC()` and `FREE()`
+- Learn proper memory management to prevent leaks
+- Understand dynamic vs static memory allocation
+- Essential for implementing data structures
+
+**25. Memory Sizes & Types with SIZE_OF()**
+- Explore memory usage of different data types
+- Use `SIZE_OF()` function to query type information
+- Understand pointer sizes and memory alignment
+- Critical for efficient memory usage
+
+**26. Linked List Implementation**
+- Build a complete linked list using pointers
+- Practice pointer traversal and node manipulation
+- Implement fundamental data structure concepts
+- Perfect for understanding dynamic data structures
+
+**27. Binary Tree with Pointer-like Traversal**
+- Implement tree traversal algorithms using array-based pointers
+- Practice recursive and iterative tree operations
+- Learn about hierarchical data structures
+- Advanced pointer manipulation techniques
+
+**28. Advanced Memory Operations**
+- Complex pointer arithmetic and manipulations
+- Multi-level pointer operations
+- Memory layout understanding
+- Professional-level pointer programming
+
+**29. Mixed Type Declarations**
+- Proper syntax for declaring variables of different types
+- Understanding type compatibility and declarations
+- Best practices for variable organization
+- Foundation for complex programs
+
+**30. Character Arrays & ASCII**
+- Working with character data and ASCII values
+- String manipulation using numeric character codes
+- Understanding character encoding in memory
+- Essential for text processing algorithms
+
+**31. Array Memory Layout**
+- Understanding how arrays are stored in memory
+- Calculating addresses of array elements
+- Memory address arithmetic with arrays
+- Critical for efficient array algorithms
+
+### 🔧 Recent Improvements & Bug Fixes
+
+**Comprehensive Pointer System Enhancements:**
+- ✅ **Fixed parsing issues** - Resolved "Syntax Error Unexpected token '*'" for pointer dereference assignments
+- ✅ **Enhanced SIZE_OF function** - Fixed "Unexpected token 'INTEGER'" error, now supports all data types
+- ✅ **Extended address-of operator** - Fixed "& operator requires identifier" error, now works with array elements
+- ✅ **Improved memory allocation** - Fixed "Array not found in memory" error with proper address tracking
+- ✅ **Syntax corrections** - Fixed semicolon issues and character literal problems in examples
+- ✅ **Enhanced parser logic** - Complete support for pointer operations in assignment statements
+- ✅ **Robust error handling** - Comprehensive validation for pointer operations and memory access
+- ✅ **Memory management** - Proper allocation/deallocation with bounds checking
+
+**All 31 examples now run without syntax or runtime errors**, providing a comprehensive learning environment for pointer programming and memory management concepts.
 
 ## 🚀 Quick Start
 
@@ -268,7 +341,7 @@ npm run dev
 - ✅ **Full pseudocode execution** - Run any IGCSE/A-LEVELS program
 - ✅ **Memory debugging** - Complete pointer and memory visualization
 - ✅ **Real-time validation** - Syntax checking and error detection
-- ✅ **All examples** - Access 22 built-in example programs
+- ✅ **All examples** - Access 31 built-in example programs
 - ✅ **File operations** - Download/upload your code
 - ✅ **Auto-save** - Code persists in browser
 
@@ -372,7 +445,7 @@ npm run preview
 - **Clear** - Remove all code (with confirmation)
 - **Download** - Save code as timestamped .txt file
 - **Upload** - Load code from .txt file
-- **Examples** - Load any of 22 sample programs
+- **Examples** - Load any of 31 sample programs
 
 ### Learning Features
 
