@@ -1569,9 +1569,16 @@ export class Interpreter {
   }
 
   private evaluateAddressOf(node: AddressOfNode, _context: ExecutionContext): number {
+    console.log(`=== DEBUG: evaluateAddressOf called ===`);
+    console.log(`Target type:`, node.target.type);
+
     if (node.target.type === 'Identifier') {
+      console.log(`Looking up variable: '${node.target.name}'`);
       // Simple variable address
       const address = this.variableAddresses.get(node.target.name);
+      console.log(`variableAddresses:`, Array.from(this.variableAddresses.entries()));
+      console.log(`Found address:`, address);
+
       if (address === undefined) {
         throw new RuntimeError(`Variable '${node.target.name}' not found in memory`, node.line);
       }
@@ -1579,7 +1586,12 @@ export class Interpreter {
     } else if (node.target.type === 'ArrayAccess') {
       // Array element address - calculate base address + offset
       const arrayAccess = node.target as ArrayAccessNode;
+      console.log(`Looking up array: '${arrayAccess.array}'`);
+      console.log(`variableAddresses:`, Array.from(this.variableAddresses.entries()));
+
       const baseAddress = this.variableAddresses.get(arrayAccess.array);
+      console.log(`Found baseAddress:`, baseAddress);
+
       if (baseAddress === undefined) {
         throw new RuntimeError(`Array '${arrayAccess.array}' not found in memory`, node.line);
       }
@@ -1600,7 +1612,9 @@ export class Interpreter {
         throw new RuntimeError(`Multi-dimensional arrays not supported for address-of operator`, node.line);
       }
 
-      return baseAddress + offset;
+      const finalAddress = baseAddress + offset;
+      console.log(`Final calculated address:`, finalAddress);
+      return finalAddress;
     } else {
       throw new RuntimeError(`Invalid address-of target type`, node.line);
     }
