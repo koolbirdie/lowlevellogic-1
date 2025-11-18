@@ -1158,24 +1158,33 @@ export class Parser {
         }
 
         if (name === 'SIZE_OF') {
-          // Parse the type argument manually instead of using parseExpression
-          // This allows us to accept KEYWORD tokens for type names
-          const typeToken = this.peek();
-
-          if (typeToken.type === 'IDENTIFIER' ||
-              (typeToken.type === 'KEYWORD' && this.isValidDataTypeKeyword(typeToken.value))) {
-            const typeName = typeToken.value;
-            this.advance(); // consume the type token
-            this.consume('RPAREN', 'Expected ) after SIZE_OF argument');
-
-            return {
-              type: 'SizeOf',
-              dataType: typeName as DataType,
-              line: token.line
-            };
-          } else {
-            throw new Error(`SIZE_OF expects a valid data type at line ${typeToken.line}, but got token type '${typeToken.type}' with value '${typeToken.value}'`);
+          // Parse the type argument - allow both IDENTIFIER and KEYWORD tokens
+          if (this.check('RPAREN')) {
+            throw new Error(`SIZE_OF expects a type argument at line ${token.line}`);
           }
+
+          let typeToken: Token;
+          let typeName: string;
+
+          // Handle both IDENTIFIER and KEYWORD tokens for type names
+          if (this.check('IDENTIFIER')) {
+            typeToken = this.advance();
+            typeName = typeToken.value;
+          } else if (this.check('KEYWORD') && this.isValidDataTypeKeyword(this.peek().value)) {
+            typeToken = this.advance();
+            typeName = typeToken.value;
+          } else {
+            const currentToken = this.peek();
+            throw new Error(`SIZE_OF expects a valid data type at line ${currentToken.line}, but got token type '${currentToken.type}' with value '${currentToken.value}'`);
+          }
+
+          this.consume('RPAREN', 'Expected ) after SIZE_OF argument');
+
+          return {
+            type: 'SizeOf',
+            dataType: typeName as DataType,
+            line: token.line
+          };
         }
 
         // Regular function call for INT, REAL, STRING
