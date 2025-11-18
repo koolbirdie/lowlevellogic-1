@@ -235,12 +235,26 @@ export class Interpreter {
   private executeDeclare(node: DeclareNode, context: ExecutionContext): void {
     if (node.dataType === 'ARRAY') {
       const dimensions = node.arrayBounds!.dimensions;
+
+      // Calculate total array size for memory allocation
+      const totalElements = dimensions.reduce((total, dim) => {
+        return total * (dim.upper - dim.lower + 1);
+      }, 1);
+
+      const elementSize = this.memory.getTypeSize(node.arrayElementType || 'INTEGER');
+      const arraySize = totalElements * elementSize;
+
+      // Allocate memory for the entire array
+      const address = this.memory.allocate(arraySize, 'ARRAY');
+      this.variableAddresses.set(node.identifier, address);
+
       context.variables.set(node.identifier, {
         type: 'ARRAY',
         value: this.createArray(dimensions),
         dimensions,
         elementType: node.arrayElementType,
-        initialized: false
+        initialized: false,
+        memoryAddress: address
       });
     } else if (node.dataType.startsWith('POINTER_TO')) {
       // Handle pointer types - allocate memory for storing address
