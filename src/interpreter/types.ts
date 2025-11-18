@@ -235,7 +235,7 @@ export interface FunctionCallNode extends BaseNode {
 // Pointer operation nodes
 export interface AddressOfNode extends BaseNode {
   type: 'AddressOf';
-  target: IdentifierNode;
+  target: IdentifierNode | ArrayAccessNode;
 }
 
 export interface DereferenceNode extends BaseNode {

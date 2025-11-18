@@ -150,7 +150,14 @@ export class Parser {
   }
 
   private parseStatement(): ASTNode | null {
+    this.skipNewlines();
+
+    if (this.isAtEnd()) {
+      return null;
+    }
+
     const token = this.peek();
+    console.log(`=== parseStatement DEBUG: Processing ${token.type}("${token.value}") at line ${token.line} ===`);
 
     if (token.type === 'KEYWORD') {
       switch (token.value) {
@@ -189,6 +196,7 @@ export class Parser {
         case 'FREE':
           return this.parseMemoryFree();
         default:
+          console.log(`parseStatement ERROR: Unexpected keyword '${token.value}' at line ${token.line}`);
           throw new Error(`Unexpected keyword '${token.value}' at line ${token.line}`);
       }
     }
@@ -196,13 +204,16 @@ export class Parser {
     // Check for assignment (including dereference assignments)
     if (token.type === 'IDENTIFIER' ||
         (token.type === 'OPERATOR' && token.value === '*')) {
+      console.log(`parseStatement: Found assignment starting with ${token.type}("${token.value}")`);
       return this.parseAssignment();
     }
 
     if (token.type === 'NEWLINE') {
+      console.log(`parseStatement: Skipping newline`);
       return null;
     }
 
+    console.log(`parseStatement ERROR: Unexpected token ${token.type}("${token.value}") at line ${token.line}`);
     throw new Error(`Unexpected token '${token.value}' at line ${token.line}`);
   }
 
@@ -919,7 +930,10 @@ export class Parser {
 
   // Expression parsing with operator precedence
   private parseExpression(): ExpressionNode {
-    return this.parseOr();
+    console.log(`=== parseExpression DEBUG: Starting at position ${this.current}, token: ${JSON.stringify(this.peek())} ===`);
+    const result = this.parseOr();
+    console.log(`=== parseExpression DEBUG: Completed successfully ===`);
+    return result;
   }
 
   private parseOr(): ExpressionNode {
@@ -1050,12 +1064,15 @@ export class Parser {
     if (token.type === 'OPERATOR' && token.value === '&') {
       const op = this.advance();
       const operand = this.parsePrimary();
-      if (operand.type !== 'Identifier') {
-        throw new Error(`& operator requires identifier at line ${op.line}`);
+
+      // Accept both identifiers and array access expressions
+      if (operand.type !== 'Identifier' && operand.type !== 'ArrayAccess') {
+        throw new Error(`& operator requires identifier or array access at line ${op.line}`);
       }
+
       return {
         type: 'AddressOf',
-        target: operand as IdentifierNode,
+        target: operand,
         line: op.line
       };
     }
@@ -1128,6 +1145,67 @@ export class Parser {
         const name = this.advance().value;
         this.advance(); // consume (
 
+        // Handle SIZE_OF specially - it doesn't use parseExpression for its argument
+        if (name === 'SIZE_OF') {
+          // Parse type argument directly - NOT through parseExpression
+          if (this.check('RPAREN')) {
+            throw new Error(`SIZE_OF expects a type argument at line ${token.line}`);
+          }
+
+          let typeToken: Token;
+          let typeName: string;
+
+          // Handle both IDENTIFIER and KEYWORD tokens for type names
+          if (this.check('IDENTIFIER')) {
+            typeToken = this.advance();
+            typeName = typeToken.value;
+          } else if (this.check('KEYWORD') && this.isValidDataTypeKeyword(this.peek().value)) {
+            typeToken = this.advance();
+            typeName = typeToken.value;
+          } else {
+            const currentToken = this.peek();
+            throw new Error(`SIZE_OF expects a valid data type at line ${currentToken.line}, but got token type '${currentToken.type}' with value '${currentToken.value}'`);
+          }
+
+          this.consume('RPAREN', 'Expected ) after SIZE_OF argument');
+
+          return {
+            type: 'SizeOf',
+            dataType: typeName as DataType,
+            line: token.line
+          };
+        }
+
+        // Handle MALLOC
+        if (name === 'MALLOC') {
+          const args: ExpressionNode[] = [];
+
+          if (!this.check('RPAREN')) {
+            do {
+              args.push(this.parseExpression());
+              if (this.check('COMMA')) {
+                this.advance();
+              } else {
+                break;
+              }
+            } while (true);
+          }
+
+          this.consume('RPAREN', 'Expected ) after MALLOC argument');
+
+          // MALLOC expects size argument and returns a pointer
+          if (args.length !== 1) {
+            throw new Error(`MALLOC expects exactly 1 argument at line ${token.line}`);
+          }
+          return {
+            type: 'MemoryAllocation',
+            size: args[0],
+            targetType: 'VOID_POINTER', // Default type, can be cast later
+            line: token.line
+          };
+        }
+
+        // Handle regular function calls (INT, REAL, STRING)
         const args: ExpressionNode[] = [];
 
         if (!this.check('RPAREN')) {
@@ -1143,68 +1221,6 @@ export class Parser {
 
         this.consume('RPAREN', 'Expected ) after function arguments');
 
-        // Handle special cases
-        if (name === 'MALLOC') {
-          // MALLOC expects size argument and returns a pointer
-          if (args.length !== 1) {
-            throw new Error(`MALLOC expects exactly 1 argument at line ${token.line}`);
-          }
-          return {
-            type: 'MemoryAllocation',
-            size: args[0],
-            targetType: 'VOID_POINTER', // Default type, can be cast later
-            line: token.line
-          };
-        }
-
-        if (name === 'SIZE_OF') {
-          console.log('=== SIZE_OF DEBUG ===');
-          console.log('Current position:', this.current);
-          console.log('Current token:', JSON.stringify(this.peek()));
-
-          // Parse the type argument - allow both IDENTIFIER and KEYWORD tokens
-          if (this.check('RPAREN')) {
-            throw new Error(`SIZE_OF expects a type argument at line ${token.line}`);
-          }
-
-          let typeToken: Token;
-          let typeName: string;
-
-          console.log('Next token check:', JSON.stringify(this.peek()));
-
-          // Handle both IDENTIFIER and KEYWORD tokens for type names
-          if (this.check('IDENTIFIER')) {
-            console.log('Found IDENTIFIER token');
-            typeToken = this.advance();
-            typeName = typeToken.value;
-          } else if (this.check('KEYWORD')) {
-            console.log('Found KEYWORD token:', this.peek().value);
-            console.log('Is valid data type?', this.isValidDataTypeKeyword(this.peek().value));
-            if (this.isValidDataTypeKeyword(this.peek().value)) {
-              typeToken = this.advance();
-              typeName = typeToken.value;
-            } else {
-              const currentToken = this.peek();
-              throw new Error(`SIZE_OF expects a valid data type at line ${currentToken.line}, but got invalid keyword '${currentToken.value}'`);
-            }
-          } else {
-            const currentToken = this.peek();
-            throw new Error(`SIZE_OF expects a valid data type at line ${currentToken.line}, but got token type '${currentToken.type}' with value '${currentToken.value}'`);
-          }
-
-          console.log('Type name extracted:', typeName);
-          this.consume('RPAREN', 'Expected ) after SIZE_OF argument');
-          console.log('SIZE_OF parsing successful');
-          console.log('=== END SIZE_OF DEBUG ===');
-
-          return {
-            type: 'SizeOf',
-            dataType: typeName as DataType,
-            line: token.line
-          };
-        }
-
-        // Regular function call for INT, REAL, STRING
         return {
           type: 'FunctionCall',
           name,

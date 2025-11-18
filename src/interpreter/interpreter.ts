@@ -234,14 +234,36 @@ export class Interpreter {
 
   private executeDeclare(node: DeclareNode, context: ExecutionContext): void {
     if (node.dataType === 'ARRAY') {
+      console.log(`=== DEBUG: Declaring ARRAY '${node.identifier}' ===`);
       const dimensions = node.arrayBounds!.dimensions;
+      console.log(`Array dimensions:`, dimensions);
+
+      // Calculate total array size for memory allocation
+      const totalElements = dimensions.reduce((total, dim) => {
+        return total * (dim.upper - dim.lower + 1);
+      }, 1);
+      console.log(`Total elements:`, totalElements);
+
+      const elementSize = this.memory.getTypeSize(node.arrayElementType || 'INTEGER');
+      const arraySize = totalElements * elementSize;
+      console.log(`Element size:`, elementSize, `Total array size:`, arraySize);
+
+      // Allocate memory for the entire array
+      const address = this.memory.allocate(arraySize, 'ARRAY');
+      console.log(`Allocated array at address:`, address);
+      this.variableAddresses.set(node.identifier, address);
+
+      console.log(`variableAddresses now contains:`, Array.from(this.variableAddresses.entries()));
+
       context.variables.set(node.identifier, {
         type: 'ARRAY',
         value: this.createArray(dimensions),
         dimensions,
         elementType: node.arrayElementType,
-        initialized: false
+        initialized: false,
+        memoryAddress: address
       });
+      console.log(`=== END ARRAY DECLARATION DEBUG ===`);
     } else if (node.dataType.startsWith('POINTER_TO')) {
       // Handle pointer types - allocate memory for storing address
       const address = this.memory.allocate(1, node.dataType);
@@ -1547,11 +1569,55 @@ export class Interpreter {
   }
 
   private evaluateAddressOf(node: AddressOfNode, _context: ExecutionContext): number {
-    const address = this.variableAddresses.get(node.target.name);
-    if (address === undefined) {
-      throw new RuntimeError(`Variable '${node.target.name}' not found in memory`, node.line);
+    console.log(`=== DEBUG: evaluateAddressOf called ===`);
+    console.log(`Target type:`, node.target.type);
+
+    if (node.target.type === 'Identifier') {
+      console.log(`Looking up variable: '${node.target.name}'`);
+      // Simple variable address
+      const address = this.variableAddresses.get(node.target.name);
+      console.log(`variableAddresses:`, Array.from(this.variableAddresses.entries()));
+      console.log(`Found address:`, address);
+
+      if (address === undefined) {
+        throw new RuntimeError(`Variable '${node.target.name}' not found in memory`, node.line);
+      }
+      return address;
+    } else if (node.target.type === 'ArrayAccess') {
+      // Array element address - calculate base address + offset
+      const arrayAccess = node.target as ArrayAccessNode;
+      console.log(`Looking up array: '${arrayAccess.array}'`);
+      console.log(`variableAddresses:`, Array.from(this.variableAddresses.entries()));
+
+      const baseAddress = this.variableAddresses.get(arrayAccess.array);
+      console.log(`Found baseAddress:`, baseAddress);
+
+      if (baseAddress === undefined) {
+        throw new RuntimeError(`Array '${arrayAccess.array}' not found in memory`, node.line);
+      }
+
+      // Calculate offset based on array indices
+      // This is a simplified calculation - in practice, you'd need to consider
+      // array bounds, element size, and multi-dimensional arrays
+      const elementSize = this.memory.getTypeSize('INTEGER'); // Assume INTEGER elements
+      let offset = 0;
+
+      if (arrayAccess.indices.length === 1) {
+        const index = this.evaluateExpression(arrayAccess.indices[0], _context);
+        if (typeof index !== 'number') {
+          throw new RuntimeError(`Array index must be a number`, node.line);
+        }
+        offset = index * elementSize;
+      } else {
+        throw new RuntimeError(`Multi-dimensional arrays not supported for address-of operator`, node.line);
+      }
+
+      const finalAddress = baseAddress + offset;
+      console.log(`Final calculated address:`, finalAddress);
+      return finalAddress;
+    } else {
+      throw new RuntimeError(`Invalid address-of target type`, node.line);
     }
-    return address;
   }
 
   private evaluateDereference(node: DereferenceNode, context: ExecutionContext): any {
