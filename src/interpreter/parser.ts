@@ -1142,39 +1142,9 @@ export class Parser {
         const name = this.advance().value;
         this.advance(); // consume (
 
-        const args: ExpressionNode[] = [];
-
-        if (!this.check('RPAREN')) {
-          do {
-            args.push(this.parseExpression());
-            if (this.check('COMMA')) {
-              this.advance();
-            } else {
-              break;
-            }
-          } while (true);
-        }
-
-        this.consume('RPAREN', 'Expected ) after function arguments');
-
-        // Handle special cases
-        if (name === 'MALLOC') {
-          // MALLOC expects size argument and returns a pointer
-          if (args.length !== 1) {
-            throw new Error(`MALLOC expects exactly 1 argument at line ${token.line}`);
-          }
-          return {
-            type: 'MemoryAllocation',
-            size: args[0],
-            targetType: 'VOID_POINTER', // Default type, can be cast later
-            line: token.line
-          };
-        }
-
+        // Handle SIZE_OF specially - it doesn't use parseExpression for its argument
         if (name === 'SIZE_OF') {
-          // SIZE_OF expects a type argument - parse it directly, not through the argument loop
-          // The argument loop above shouldn't run for SIZE_OF
-
+          // Parse type argument directly - NOT through parseExpression
           if (this.check('RPAREN')) {
             throw new Error(`SIZE_OF expects a type argument at line ${token.line}`);
           }
@@ -1203,7 +1173,51 @@ export class Parser {
           };
         }
 
-        // Regular function call for INT, REAL, STRING
+        // Handle MALLOC
+        if (name === 'MALLOC') {
+          const args: ExpressionNode[] = [];
+
+          if (!this.check('RPAREN')) {
+            do {
+              args.push(this.parseExpression());
+              if (this.check('COMMA')) {
+                this.advance();
+              } else {
+                break;
+              }
+            } while (true);
+          }
+
+          this.consume('RPAREN', 'Expected ) after MALLOC argument');
+
+          // MALLOC expects size argument and returns a pointer
+          if (args.length !== 1) {
+            throw new Error(`MALLOC expects exactly 1 argument at line ${token.line}`);
+          }
+          return {
+            type: 'MemoryAllocation',
+            size: args[0],
+            targetType: 'VOID_POINTER', // Default type, can be cast later
+            line: token.line
+          };
+        }
+
+        // Handle regular function calls (INT, REAL, STRING)
+        const args: ExpressionNode[] = [];
+
+        if (!this.check('RPAREN')) {
+          do {
+            args.push(this.parseExpression());
+            if (this.check('COMMA')) {
+              this.advance();
+            } else {
+              break;
+            }
+          } while (true);
+        }
+
+        this.consume('RPAREN', 'Expected ) after function arguments');
+
         return {
           type: 'FunctionCall',
           name,
