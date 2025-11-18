@@ -1039,10 +1039,11 @@ FOR i <-- 1 TO 8
     numbers[i] <-- i * 10
 NEXT i
 
-letters[1] <-- 'A'
-letters[2] <-- 'B'
-letters[3] <-- 'C'
-letters[4] <-- 'D'
+// Initialize character array with ASCII values
+letters[1] <-- 65  // ASCII 'A'
+letters[2] <-- 66  // ASCII 'B'
+letters[3] <-- 67  // ASCII 'C'
+letters[4] <-- 68  // ASCII 'D'
 
 OUTPUT "Initialized data:"
 OUTPUT "Numbers: ", numbers[1], " ", numbers[2], " ", numbers[3], " ", numbers[4]
