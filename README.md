@@ -233,6 +233,65 @@ The editor includes **31 comprehensive examples** covering:
 26. **Linked List Implementation** - Data structures with pointers
 27. **Binary Tree Traversal** - Tree structures and recursive algorithms
 28. **Advanced Memory Operations** - Complex pointer manipulations
+29. **Mixed Type Declarations** - Proper variable declaration patterns
+30. **Character Arrays & ASCII** - Working with character data and numeric values
+31. **Array Memory Layout** - Understanding memory addresses of array elements
+
+### 🧠 Memory Management Examples in Detail
+
+**23. Introduction to Pointers and Memory Addresses**
+- Learn the fundamentals of memory addresses and pointers
+- Practice using address-of (`&`) and dereference (`*`) operators
+- Understand how variables are stored in memory
+- Perfect for beginners learning pointer concepts
+
+**24. Dynamic Memory Allocation (MALLOC/FREE)**
+- Master heap memory allocation with `MALLOC()` and `FREE()`
+- Learn proper memory management to prevent leaks
+- Understand dynamic vs static memory allocation
+- Essential for implementing data structures
+
+**25. Memory Sizes & Types with SIZE_OF()**
+- Explore memory usage of different data types
+- Use `SIZE_OF()` function to query type information
+- Understand pointer sizes and memory alignment
+- Critical for efficient memory usage
+
+**26. Linked List Implementation**
+- Build a complete linked list using pointers
+- Practice pointer traversal and node manipulation
+- Implement fundamental data structure concepts
+- Perfect for understanding dynamic data structures
+
+**27. Binary Tree with Pointer-like Traversal**
+- Implement tree traversal algorithms using array-based pointers
+- Practice recursive and iterative tree operations
+- Learn about hierarchical data structures
+- Advanced pointer manipulation techniques
+
+**28. Advanced Memory Operations**
+- Complex pointer arithmetic and manipulations
+- Multi-level pointer operations
+- Memory layout understanding
+- Professional-level pointer programming
+
+**29. Mixed Type Declarations**
+- Proper syntax for declaring variables of different types
+- Understanding type compatibility and declarations
+- Best practices for variable organization
+- Foundation for complex programs
+
+**30. Character Arrays & ASCII**
+- Working with character data and ASCII values
+- String manipulation using numeric character codes
+- Understanding character encoding in memory
+- Essential for text processing algorithms
+
+**31. Array Memory Layout**
+- Understanding how arrays are stored in memory
+- Calculating addresses of array elements
+- Memory address arithmetic with arrays
+- Critical for efficient array algorithms
 
 ## 🚀 Quick Start
 
