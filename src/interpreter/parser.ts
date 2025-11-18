@@ -1174,7 +1174,7 @@ export class Parser {
               line: token.line
             };
           } else {
-            throw new Error(`SIZE_OF expects a valid data type at line ${typeToken.line}`);
+            throw new Error(`SIZE_OF expects a valid data type at line ${typeToken.line}, but got token type '${typeToken.type}' with value '${typeToken.value}'`);
           }
         }
 
