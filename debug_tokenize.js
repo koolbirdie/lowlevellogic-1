@@ -233,7 +233,7 @@ function parseForLoop(tokens) {
   }
 }
 
-const testCode = `FOR i = 1 TO 5
+const testCode = `FOR i <- 1 TO 5
     OUTPUT i
 NEXT i`;
 
