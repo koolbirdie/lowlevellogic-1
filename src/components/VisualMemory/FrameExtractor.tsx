@@ -41,7 +41,7 @@ export class FrameExtractor {
     }
 
     // Rebuild memory state up to this point
-    const memoryState = new Map<number, any>();
+    const memoryState = new Map<string, any>();
     const variableAddresses = new Map<string, number>();
     const operations = this.traceLog.slice(0, traceIndex + 1);
 
