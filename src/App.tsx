@@ -210,6 +210,10 @@ function App() {
       const files = interpreter.getAllFiles();
       setCreatedFiles(files);
 
+      // Collect trace data from interpreter
+      const traceData = interpreter.getMemoryTracer().getTraceLog();
+      setMemoryTrace(traceData);
+
       setIsRunning(false);
       setWaitingForInput(false);
     } catch (error) {
