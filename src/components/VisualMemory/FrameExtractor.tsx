@@ -41,13 +41,14 @@ export class FrameExtractor {
     }
 
     // Rebuild memory state up to this point
-    const memoryState = new Map<string, any>();
+    const memoryState = new Map<number, any>();
+    const memoryMetadata = new Map<string, any>();
     const variableAddresses = new Map<string, number>();
     const operations = this.traceLog.slice(0, traceIndex + 1);
 
     // Process operations in order to build state
     for (const operation of operations) {
-      this.processOperation(operation, memoryState, variableAddresses);
+      this.processOperation(operation, memoryState, memoryMetadata, variableAddresses);
     }
 
     const frame: VisualFrame = {
