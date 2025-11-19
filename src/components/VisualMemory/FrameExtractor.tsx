@@ -142,7 +142,7 @@ export class FrameExtractor {
         // Dereference operations don't change the pointer value itself
         // But they can be used for visualization purposes
         if (operation.pointerAddress !== undefined && operation.address !== undefined) {
-          memoryState.set(`${operation.pointerAddress}_dereferenced_to`, operation.address);
+          memoryMetadata.set(`${operation.pointerAddress}_dereferenced_to`, operation.address);
         }
         break;
     }
