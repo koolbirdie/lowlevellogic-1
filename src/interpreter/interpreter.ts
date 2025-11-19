@@ -1655,6 +1655,9 @@ export class Interpreter {
       if (address === undefined) {
         throw new RuntimeError(`Variable '${node.target.name}' not found in memory`, node.line);
       }
+
+      // Log address-of operation
+      this.tracer.logAddressOf(node.line, node.target.name, address);
       return address;
     } else if (node.target.type === 'ArrayAccess') {
       // Array element address - calculate base address + offset
