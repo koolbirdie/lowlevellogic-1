@@ -295,6 +295,9 @@ export class Interpreter {
       const address = this.memory.allocate(size, node.dataType);
       this.variableAddresses.set(node.identifier, address);
 
+      // Log variable declaration
+      this.tracer.logDeclare(node.line, node.identifier, address, node.dataType);
+
       // Initialize with default value
       let defaultValue: any;
       switch (node.dataType) {
