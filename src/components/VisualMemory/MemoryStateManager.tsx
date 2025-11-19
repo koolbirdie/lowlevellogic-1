@@ -306,8 +306,7 @@ export class MemoryStateManager {
 // React component wrapper
 export const MemoryStateManagerComponent: React.FC<MemoryStateManagerProps> = ({
   traceLog,
-  variables,
-  onStateUpdate
+  variables
 }) => {
   const managerRef = useRef<MemoryStateManager | null>(null);
 
