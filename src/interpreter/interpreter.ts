@@ -147,10 +147,12 @@ export class Interpreter {
   }
 
   public async* executeProgram(ast: ASTNode[]): AsyncGenerator<string, void, unknown> {
+    console.log(`[EXECUTION] executeProgram called with ${ast.length} AST nodes`);
     yield* this.execute(ast);
   }
 
   public async* execute(ast: ASTNode[]): AsyncGenerator<string, void, unknown> {
+    console.log(`[EXECUTION] execute called with ${ast.length} AST nodes`);
     // First pass: register procedures and functions
     for (const node of ast) {
       if (node.type === 'Procedure') {
@@ -161,14 +163,18 @@ export class Interpreter {
     }
 
     // Second pass: execute statements
+    console.log(`[EXECUTION] Starting second pass - executing statements`);
     for (const node of ast) {
+      console.log(`[EXECUTION] Processing node type: ${node.type}`);
       if (node.type !== 'Procedure' && node.type !== 'Function') {
+        console.log(`[EXECUTION] Calling executeNode for ${node.type}`);
         yield* this.executeNode(node, this.globalContext);
       }
     }
   }
 
   private async* executeNode(node: ASTNode, context: ExecutionContext): AsyncGenerator<string, any, unknown> {
+    console.log(`[EXECUTION] executeNode called with type: ${node.type} at line ${node.line}`);
     this.iterationCount++;
     if (this.iterationCount > MAX_ITERATIONS) {
       throw new RuntimeError('Execution timeout: Possible infinite loop', node.line);
@@ -260,6 +266,10 @@ export class Interpreter {
       console.log(`Allocated array at address:`, address);
       this.variableAddresses.set(node.identifier, address);
 
+      // Log array allocation and declaration
+      this.tracer.logAllocate(node.line, address, arraySize, 'ARRAY');
+      this.tracer.logDeclare(node.line, node.identifier, address, `ARRAY[${node.arrayElementType}]`);
+
       console.log(`variableAddresses now contains:`, Array.from(this.variableAddresses.entries()));
 
       context.variables.set(node.identifier, {
@@ -275,6 +285,10 @@ export class Interpreter {
       // Handle pointer types - allocate memory for storing address
       const address = this.memory.allocate(1, node.dataType);
       this.variableAddresses.set(node.identifier, address);
+
+      // Log pointer declaration
+      this.tracer.logDeclare(node.line, node.identifier, address, node.dataType);
+
       context.variables.set(node.identifier, {
         type: node.dataType,
         value: 0, // Initialize to null pointer (address 0)
@@ -286,6 +300,9 @@ export class Interpreter {
       const size = this.memory.getTypeSize(node.dataType);
       const address = this.memory.allocate(size, node.dataType);
       this.variableAddresses.set(node.identifier, address);
+
+      // Log variable declaration
+      this.tracer.logDeclare(node.line, node.identifier, address, node.dataType);
 
       // Initialize with default value
       let defaultValue: any;
@@ -350,6 +367,8 @@ export class Interpreter {
       // Update memory if variable has a memory address
       if (variable.memoryAddress !== undefined) {
         this.memory.write(variable.memoryAddress, value);
+        // Log write operation
+        this.tracer.logWrite(node.line, variable.memoryAddress, value, varName);
       }
     } else if (node.target.type === 'ArrayAccess') {
       const arrayAccess = node.target as ArrayAccessNode;
@@ -372,6 +391,15 @@ export class Interpreter {
       });
 
       this.setArrayElement(variable.value, indices, value, variable.dimensions!, node.line);
+
+      // Log array element write operation with calculated address
+      const baseAddress = this.variableAddresses.get(arrayAccess.array);
+      if (baseAddress !== undefined) {
+        const elementSize = this.memory.getTypeSize(variable.elementType || 'INTEGER');
+        const index = indices[0]; // Simplified for single dimension
+        const elementAddress = baseAddress + index * elementSize;
+        this.tracer.logWrite(node.line, elementAddress, value, `${arrayAccess.array}[${index}]`);
+      }
     } else if ((node.target as any).type === 'Dereference') {
       // Handle assignment through pointer dereference (*ptr = value)
       const derefNode = node.target as DereferenceNode;
@@ -382,6 +410,8 @@ export class Interpreter {
       }
 
       this.memory.write(pointerAddress, value);
+      // Log pointer dereference write
+      this.tracer.logWrite(node.line, pointerAddress, value, `*ptr`);
     }
   }
 
@@ -453,6 +483,8 @@ export class Interpreter {
       // Update memory if variable has a memory address
       if (variable.memoryAddress !== undefined) {
         this.memory.write(variable.memoryAddress, value);
+        // Log write operation for input
+        this.tracer.logWrite(node.line, variable.memoryAddress, value, varName);
       }
 
       // Echo the entered value to output
@@ -503,6 +535,15 @@ export class Interpreter {
 
       this.setArrayElement(variable.value, indices, value, variable.dimensions!, node.line);
 
+      // Log array element input operation
+      const baseAddress = this.variableAddresses.get(arrayAccess.array);
+      if (baseAddress !== undefined) {
+        const elementSize = this.memory.getTypeSize(variable.elementType || 'INTEGER');
+        const index = indices[0]; // Simplified for single dimension
+        const elementAddress = baseAddress + index * elementSize;
+        this.tracer.logWrite(node.line, elementAddress, value, `${arrayAccess.array}[${index}]`);
+      }
+
       // Echo the entered value to output
       yield input;
     } else if ((node.target as any).type === 'Dereference') {
@@ -528,6 +569,8 @@ export class Interpreter {
 
       // Write to memory location pointed to by pointer
       this.memory.write(pointerAddress, value);
+      // Log pointer dereference input
+      this.tracer.logWrite(node.line, pointerAddress, value, `*ptr`);
 
       // Echo the entered value to output
       yield input;
@@ -952,6 +995,8 @@ export class Interpreter {
     }
 
     try {
+      // Log memory deallocation
+      this.tracer.logFree(node.line, pointerAddress);
       this.memory.free(pointerAddress);
       yield `Freed memory at address 0x${pointerAddress.toString(16).toUpperCase()}`;
     } catch (error) {
@@ -1394,7 +1439,10 @@ export class Interpreter {
     // Read from memory if variable has a memory address
     if (variable.memoryAddress !== undefined) {
       try {
-        return this.memory.read(variable.memoryAddress);
+        const value = this.memory.read(variable.memoryAddress);
+        // Log read operation
+        this.tracer.logRead(node.line, variable.memoryAddress, value, node.name);
+        return value;
       } catch (error) {
         throw new RuntimeError(`Memory read error for variable '${node.name}': ${(error as Error).message}`, node.line);
       }
@@ -1615,6 +1663,9 @@ export class Interpreter {
       if (address === undefined) {
         throw new RuntimeError(`Variable '${node.target.name}' not found in memory`, node.line);
       }
+
+      // Log address-of operation
+      this.tracer.logAddressOf(node.line, node.target.name, address);
       return address;
     } else if (node.target.type === 'ArrayAccess') {
       // Array element address - calculate base address + offset
@@ -1634,19 +1685,23 @@ export class Interpreter {
       // array bounds, element size, and multi-dimensional arrays
       const elementSize = this.memory.getTypeSize('INTEGER'); // Assume INTEGER elements
       let offset = 0;
+      let indexValue = 0;
 
       if (arrayAccess.indices.length === 1) {
-        const index = this.evaluateExpression(arrayAccess.indices[0], _context);
-        if (typeof index !== 'number') {
+        indexValue = this.evaluateExpression(arrayAccess.indices[0], _context);
+        if (typeof indexValue !== 'number') {
           throw new RuntimeError(`Array index must be a number`, node.line);
         }
-        offset = index * elementSize;
+        offset = indexValue * elementSize;
       } else {
         throw new RuntimeError(`Multi-dimensional arrays not supported for address-of operator`, node.line);
       }
 
       const finalAddress = baseAddress + offset;
       console.log(`Final calculated address:`, finalAddress);
+
+      // Log address-of operation for array element
+      this.tracer.logAddressOf(node.line, `${arrayAccess.array}[${indexValue}]`, finalAddress);
       return finalAddress;
     } else {
       throw new RuntimeError(`Invalid address-of target type`, node.line);
@@ -1660,7 +1715,10 @@ export class Interpreter {
     }
 
     try {
-      return this.memory.read(pointerAddress);
+      const value = this.memory.read(pointerAddress);
+      // Log dereference operation
+      this.tracer.logDereference(node.line, pointerAddress, value);
+      return value;
     } catch (error) {
       throw new RuntimeError(`Memory read error at address 0x${pointerAddress.toString(16).toUpperCase()}: ${(error as Error).message}`, node.line);
     }
@@ -1674,6 +1732,8 @@ export class Interpreter {
 
     try {
       const address = this.memory.allocate(size, node.targetType);
+      // Log memory allocation
+      this.tracer.logAllocate(node.line, address, size, node.targetType);
       return address;
     } catch (error) {
       throw new RuntimeError(`Memory allocation error: ${(error as Error).message}`, node.line);

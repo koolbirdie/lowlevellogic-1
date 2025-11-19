@@ -45,6 +45,7 @@ export class MemoryTracer {
   /**
    * Log variable declaration
    */
+<<<<<<< HEAD
   logDeclare(line: number, variable: string, address: number, type: string, variableData?: Variable): void {
     const isArray = type === 'ARRAY';
     let metadata: any = { type, isArray };
@@ -63,6 +64,10 @@ export class MemoryTracer {
       };
     }
 
+=======
+  logDeclare(line: number, variable: string, address: number, type: string): void {
+    console.log(`[TRACE] DECLARE: line=${line}, variable=${variable}, address=${address}, type=${type}`);
+>>>>>>> main
     this.addEntry('DECLARE', line, {
       variable,
       address,
@@ -74,6 +79,7 @@ export class MemoryTracer {
   /**
    * Log memory write operation
    */
+<<<<<<< HEAD
   logWrite(line: number, address: number, value: any, variable?: string, oldValue?: any): void {
     const metadata: any = {};
     if (oldValue !== undefined) {
@@ -88,6 +94,10 @@ export class MemoryTracer {
       this.variableStates.set(variable, value);
     }
 
+=======
+  logWrite(line: number, address: number, value: any, variable?: string): void {
+    console.log(`[TRACE] WRITE: line=${line}, address=${address}, value=${value}, variable=${variable || 'undefined'}`);
+>>>>>>> main
     this.addEntry('WRITE', line, {
       address,
       value,
@@ -129,7 +139,12 @@ export class MemoryTracer {
   /**
    * Log address-of operation (&)
    */
+<<<<<<< HEAD
   logAddressOf(line: number, variable: string, address: number, pointerAddress: number): void {
+=======
+  logAddressOf(line: number, variable: string, address: number): void {
+    console.log(`[TRACE] ADDRESS_OF: line=${line}, variable=${variable}, address=${address}`);
+>>>>>>> main
     this.addEntry('ADDRESS_OF', line, {
       variable,
       address,
@@ -332,6 +347,7 @@ export class MemoryTracer {
    * Get the complete trace log
    */
   getTraceLog(): MemoryTraceEntry[] {
+    console.log(`[TRACE] getTraceLog called, returning ${this.traceLog.length} entries`);
     return [...this.traceLog];
   }
 
