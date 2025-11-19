@@ -70,6 +70,7 @@ export class Interpreter {
   private fileUploadHandler?: (filename: string) => Promise<string>;
   private memory: MemoryEngine;
   private variableAddresses: Map<string, number>;
+  private tracer: MemoryTracer;
 
   constructor(
     inputHandler?: (variableName: string, variableType: string) => Promise<string>,
