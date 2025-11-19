@@ -50,7 +50,6 @@ const VisualMemory: React.FC<VisualMemoryProps> = ({
 
   // Reconstruct memory state at specific frame
   const memoryStateAtFrame = useMemo(() => {
-    const memoryCopy = new MemoryEngine();
     const cellData: MemoryCell[] = [];
     const arrays: ArrayInfo[] = [];
     const pointers: PointerVisualization[] = [];
