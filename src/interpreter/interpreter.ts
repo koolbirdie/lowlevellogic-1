@@ -385,6 +385,15 @@ export class Interpreter {
       });
 
       this.setArrayElement(variable.value, indices, value, variable.dimensions!, node.line);
+
+      // Log array element write operation with calculated address
+      const baseAddress = this.variableAddresses.get(arrayAccess.array);
+      if (baseAddress !== undefined) {
+        const elementSize = this.memory.getTypeSize(variable.elementType || 'INTEGER');
+        const index = indices[0]; // Simplified for single dimension
+        const elementAddress = baseAddress + index * elementSize;
+        this.tracer.logWrite(node.line, elementAddress, value, `${arrayAccess.array}[${index}]`);
+      }
     } else if ((node.target as any).type === 'Dereference') {
       // Handle assignment through pointer dereference (*ptr = value)
       const derefNode = node.target as DereferenceNode;
@@ -395,6 +404,8 @@ export class Interpreter {
       }
 
       this.memory.write(pointerAddress, value);
+      // Log pointer dereference write
+      this.tracer.logWrite(node.line, pointerAddress, value, `*ptr`);
     }
   }
 
