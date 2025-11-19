@@ -563,6 +563,8 @@ export class Interpreter {
 
       // Write to memory location pointed to by pointer
       this.memory.write(pointerAddress, value);
+      // Log pointer dereference input
+      this.tracer.logWrite(node.line, pointerAddress, value, `*ptr`);
 
       // Echo the entered value to output
       yield input;
