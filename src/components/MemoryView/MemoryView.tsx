@@ -159,13 +159,26 @@ export default function MemoryView({
       </div>
 
       <div className={styles.content}>
+        {activeTab === 'visual' && (
+          <div className={styles.visualTab}>
+            <VisualMemory
+              memory={memory}
+              variableAddresses={variableAddresses}
+              traceLog={traceLog}
+              variables={variables}
+              currentFrame={currentFrame}
+              onFrameChange={onFrameChange}
+            />
+          </div>
+        )}
+
         {activeTab === 'variables' && (
           <div className={styles.variablesTab}>
-            {variables.length === 0 ? (
+            {variableInfo.length === 0 ? (
               <div className={styles.empty}>No variables declared yet</div>
             ) : (
               <div className={styles.variableList}>
-                {variables.map((variable) => (
+                {variableInfo.map((variable) => (
                   <div key={variable.name} className={styles.variable}>
                     <div className={styles.variableName}>{variable.name}</div>
                     <div className={styles.variableAddress}>
