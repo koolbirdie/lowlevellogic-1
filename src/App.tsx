@@ -201,7 +201,9 @@ function App() {
       interpreterRef.current = interpreter;
 
       // Execute with animation
+      console.log(`[App] About to call interpreter.executeProgram with AST:`, ast);
       const generator = interpreter.executeProgram(ast);
+      console.log(`[App] Got generator, starting execution loop`);
 
       for await (const line of generator) {
         setOutput(prev => [...prev, line]);
@@ -375,7 +377,9 @@ function App() {
       interpreterRef.current = interpreter;
 
       // Execute with animation
+      console.log(`[App] About to call interpreter.executeProgram with AST:`, ast);
       const generator = interpreter.executeProgram(ast);
+      console.log(`[App] Got generator, starting execution loop`);
 
       for await (const line of generator) {
         setOutput(prev => [...prev, line]);
