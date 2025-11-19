@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MemoryTraceEntry, PointerVisualization } from '../../interpreter/types';
+import { MemoryTraceEntry } from '../../interpreter/types';
 import styles from './PointerOperations.module.css';
 
 interface PointerOperationsProps {
