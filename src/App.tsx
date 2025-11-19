@@ -166,8 +166,11 @@ function App() {
 
     try {
       // Tokenize and parse
+      console.log(`[App] Starting to tokenize and parse code:`, code);
       const tokens = tokenize(code);
+      console.log(`[App] Tokenization completed, got ${tokens.length} tokens`);
       const ast = parse(tokens);
+      console.log(`[App] Parsing completed, got AST:`, ast);
 
       // Create interpreter with custom input handler and file upload handler
       const interpreter = new Interpreter(
