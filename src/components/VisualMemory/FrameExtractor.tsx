@@ -185,7 +185,7 @@ export class FrameExtractor {
   }
 
   // Get memory state at any point in time
-  getMemoryStateAtFrame(frameNumber: number): Map<number, any> {
+  getMemoryStateAtFrame(frameNumber: number): Map<string, any> {
     const frame = this.extractFrame(frameNumber);
     return frame ? frame.memoryState : new Map();
   }
