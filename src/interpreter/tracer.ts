@@ -45,11 +45,29 @@ export class MemoryTracer {
   /**
    * Log variable declaration
    */
-  logDeclare(line: number, variable: string, address: number, type: string): void {
+  logDeclare(line: number, variable: string, address: number, type: string, variableData?: Variable): void {
+    const isArray = type === 'ARRAY';
+    let metadata: any = { type, isArray };
+
+    if (isArray && variableData) {
+      // Enhanced array metadata for visualization
+      metadata = {
+        type,
+        isArray: true,
+        elementType: variableData.elementType,
+        dimensions: variableData.dimensions,
+        elementSize: this.getElementTypeSize(variableData.elementType),
+        elements: variableData.dimensions?.reduce((acc, dim) =>
+          acc * (dim.upper - dim.lower + 1), 1) || 0,
+        values: variableData.value
+      };
+    }
+
     this.addEntry('DECLARE', line, {
       variable,
       address,
-      metadata: { type }
+      value: variableData?.value,
+      metadata
     });
   }
 
