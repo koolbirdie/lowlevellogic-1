@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { MemoryEngine } from '../../interpreter/memory';
 import { MemoryTraceEntry, Variable, DataType, PointerVisualization } from '../../interpreter/types';
 import MemoryBlock from './MemoryBlock';
 import ArrayBlock from './ArrayBlock';
