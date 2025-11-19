@@ -428,6 +428,17 @@ function App() {
   const handleDebugStep = () => {
     if (stepResolveRef.current) {
       setIsPaused(false);
+
+      // Collect trace data after each step
+      if (interpreterRef.current) {
+        try {
+          const traceData = interpreterRef.current.getMemoryTracer().getTraceLog();
+          setMemoryTrace(traceData);
+        } catch (traceError) {
+          // Ignore trace collection errors during stepping
+        }
+      }
+
       stepResolveRef.current();
       stepResolveRef.current = null;
     }
