@@ -260,6 +260,10 @@ export class Interpreter {
       console.log(`Allocated array at address:`, address);
       this.variableAddresses.set(node.identifier, address);
 
+      // Log array allocation and declaration
+      this.tracer.logAllocate(node.line, address, arraySize, 'ARRAY');
+      this.tracer.logDeclare(node.line, node.identifier, address, `ARRAY[${node.arrayElementType}]`);
+
       console.log(`variableAddresses now contains:`, Array.from(this.variableAddresses.entries()));
 
       context.variables.set(node.identifier, {
