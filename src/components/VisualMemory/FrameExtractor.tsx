@@ -67,7 +67,7 @@ export class FrameExtractor {
   // Process a single operation to update memory state
   private processOperation(
     operation: MemoryTraceEntry,
-    memoryState: Map<number, any>,
+    memoryState: Map<string, any>,
     variableAddresses: Map<string, number>
   ): void {
     switch (operation.operation) {
