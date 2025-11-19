@@ -244,7 +244,7 @@ const AnimationManager: React.FC<AnimationManagerProps> = ({
 
     // Execute animations with delays for smooth playback
     let cumulativeDelay = 0;
-    events.forEach((event, index) => {
+    events.forEach((event) => {
       // Stagger animations slightly
       const delay = cumulativeDelay;
       executeAnimation(event, delay);
