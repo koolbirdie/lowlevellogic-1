@@ -7,7 +7,7 @@
 
 ---
 
-*Built with* [**Compyle**](https://compyle.com) *- AI-powered development platform*
+*Built with* [**Compyle**](https://compyle.ai) *- AI-powered development platform*
 
 </div>
 
