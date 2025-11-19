@@ -1679,13 +1679,14 @@ export class Interpreter {
       // array bounds, element size, and multi-dimensional arrays
       const elementSize = this.memory.getTypeSize('INTEGER'); // Assume INTEGER elements
       let offset = 0;
+      let indexValue = 0;
 
       if (arrayAccess.indices.length === 1) {
-        const index = this.evaluateExpression(arrayAccess.indices[0], _context);
-        if (typeof index !== 'number') {
+        indexValue = this.evaluateExpression(arrayAccess.indices[0], _context);
+        if (typeof indexValue !== 'number') {
           throw new RuntimeError(`Array index must be a number`, node.line);
         }
-        offset = index * elementSize;
+        offset = indexValue * elementSize;
       } else {
         throw new RuntimeError(`Multi-dimensional arrays not supported for address-of operator`, node.line);
       }
@@ -1694,7 +1695,7 @@ export class Interpreter {
       console.log(`Final calculated address:`, finalAddress);
 
       // Log address-of operation for array element
-      this.tracer.logAddressOf(node.line, `${arrayAccess.array}[${index}]`, finalAddress);
+      this.tracer.logAddressOf(node.line, `${arrayAccess.array}[${indexValue}]`, finalAddress);
       return finalAddress;
     } else {
       throw new RuntimeError(`Invalid address-of target type`, node.line);
