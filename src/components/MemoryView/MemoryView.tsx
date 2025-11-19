@@ -31,7 +31,6 @@ export default function MemoryView({
   variableAddresses,
   traceLog,
   variables = new Map(),
-  debugState,
   currentFrame = 0,
   onFrameChange
 }: MemoryViewProps) {
