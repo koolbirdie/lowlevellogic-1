@@ -1665,7 +1665,7 @@ export class Interpreter {
       }
 
       // Log address-of operation
-      this.tracer.logAddressOf(node.line, node.target.name, address);
+      this.tracer.logAddressOf(node.line, node.target.name, address, address);
       return address;
     } else if (node.target.type === 'ArrayAccess') {
       // Array element address - calculate base address + offset
