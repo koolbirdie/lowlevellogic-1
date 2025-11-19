@@ -1706,7 +1706,10 @@ export class Interpreter {
     }
 
     try {
-      return this.memory.read(pointerAddress);
+      const value = this.memory.read(pointerAddress);
+      // Log dereference operation
+      this.tracer.logDereference(node.line, pointerAddress, value);
+      return value;
     } catch (error) {
       throw new RuntimeError(`Memory read error at address 0x${pointerAddress.toString(16).toUpperCase()}: ${(error as Error).message}`, node.line);
     }
