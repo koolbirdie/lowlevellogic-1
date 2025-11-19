@@ -1725,6 +1725,8 @@ export class Interpreter {
 
     try {
       const address = this.memory.allocate(size, node.targetType);
+      // Log memory allocation
+      this.tracer.logAllocate(node.line, address, size, node.targetType);
       return address;
     } catch (error) {
       throw new RuntimeError(`Memory allocation error: ${(error as Error).message}`, node.line);
