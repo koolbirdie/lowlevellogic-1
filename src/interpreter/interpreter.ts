@@ -92,6 +92,7 @@ export class Interpreter {
     this.fileUploadHandler = fileUploadHandler;
     this.memory = new MemoryEngine();
     this.variableAddresses = new Map();
+    this.tracer = new MemoryTracer();
   }
 
   private defaultInputHandler(variableName: string): Promise<string> {
