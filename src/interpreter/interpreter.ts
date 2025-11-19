@@ -1717,7 +1717,7 @@ export class Interpreter {
     try {
       const value = this.memory.read(pointerAddress);
       // Log dereference operation
-      this.tracer.logDereference(node.line, pointerAddress, value);
+      this.tracer.logDereference(node.line, pointerAddress, value, pointerAddress);
       return value;
     } catch (error) {
       throw new RuntimeError(`Memory read error at address 0x${pointerAddress.toString(16).toUpperCase()}: ${(error as Error).message}`, node.line);
