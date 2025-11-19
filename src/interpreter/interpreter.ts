@@ -1690,6 +1690,9 @@ export class Interpreter {
 
       const finalAddress = baseAddress + offset;
       console.log(`Final calculated address:`, finalAddress);
+
+      // Log address-of operation for array element
+      this.tracer.logAddressOf(node.line, `${arrayAccess.array}[${index}]`, finalAddress);
       return finalAddress;
     } else {
       throw new RuntimeError(`Invalid address-of target type`, node.line);
