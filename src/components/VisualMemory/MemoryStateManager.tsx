@@ -322,4 +322,4 @@ const MemoryStateManagerComponent: React.FC<MemoryStateManagerProps> = ({
   return null;
 };
 
-export default MemoryStateManager;
+export default MemoryStateManagerComponent;
