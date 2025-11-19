@@ -154,11 +154,14 @@ function App() {
     console.log(`[App] handleRun method called! isRunning: ${isRunning}, errors: ${errors.length}`);
 
     // Check for syntax errors first
+    console.log(`[App] Checking for syntax errors - total errors: ${errors.length}`);
+    console.log(`[App] Errors details:`, errors);
     if (errors.length > 0 && errors.some(e => e.type === 'syntax')) {
       console.log(`[App] Syntax errors found, blocking execution`);
       alert('Fix syntax errors before running');
       return;
     }
+    console.log(`[App] No syntax errors found, proceeding with execution`);
 
     // Clear output and errors
     setOutput([]);
