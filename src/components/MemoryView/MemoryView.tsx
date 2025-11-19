@@ -26,8 +26,16 @@ interface VariableInfo {
   type: string;
 }
 
-export default function MemoryView({ memory, variableAddresses, traceLog }: MemoryViewProps) {
-  const [activeTab, setActiveTab] = useState<'variables' | 'memory' | 'trace'>('variables');
+export default function MemoryView({
+  memory,
+  variableAddresses,
+  traceLog,
+  variables = new Map(),
+  debugState,
+  currentFrame = 0,
+  onFrameChange
+}: MemoryViewProps) {
+  const [activeTab, setActiveTab] = useState<'variables' | 'memory' | 'trace' | 'visual'>('visual');
   const [memoryStart, setMemoryStart] = useState(1024);
 
   // Process variable information
