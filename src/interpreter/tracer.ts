@@ -350,4 +350,128 @@ export class MemoryTracer {
   isEnabled(): boolean {
     return true; // Always enabled in this implementation
   }
+
+  /**
+   * Get element type size in bytes for array calculations
+   */
+  private getElementTypeSize(elementType?: string): number {
+    if (!elementType) return 4; // Default size
+
+    switch (elementType) {
+      case 'INTEGER':
+      case 'POINTER_TO_INTEGER':
+      case 'POINTER_TO_REAL':
+      case 'POINTER_TO_CHAR':
+      case 'VOID_POINTER':
+        return 4;
+      case 'REAL':
+        return 8;
+      case 'CHAR':
+      case 'BOOLEAN':
+        return 1;
+      case 'STRING':
+        return 32; // Variable length, use reasonable default
+      default:
+        return 4;
+    }
+  }
+
+  /**
+   * Get animation hints for a specific operation
+   */
+  getAnimationHints(step: number): {
+    duration: number;
+    easing: string;
+    priority: number;
+  } | null {
+    if (step < 0 || step >= this.traceLog.length) {
+      return null;
+    }
+
+    const entry = this.traceLog[step];
+    const hints: any = {
+      duration: 300,
+      easing: 'ease-in-out',
+      priority: 1
+    };
+
+    // Customize hints based on operation type
+    switch (entry.operation) {
+      case 'DECLARE':
+        hints.duration = entry.metadata?.isArray ? 600 : 400;
+        hints.easing = 'ease-out';
+        hints.priority = 2;
+        break;
+      case 'WRITE':
+        hints.duration = entry.metadata?.valueChanged ? 400 : 200;
+        hints.easing = 'ease-in-out';
+        hints.priority = 1;
+        break;
+      case 'ADDRESS_OF':
+        hints.duration = 500;
+        hints.easing = 'ease-out';
+        hints.priority = 2;
+        break;
+      case 'POINTER_ASSIGN':
+        hints.duration = 800;
+        hints.easing = 'ease-in-out';
+        hints.priority = 3;
+        break;
+      case 'DEREFERENCE':
+        hints.duration = 400;
+        hints.easing = 'ease-in-out';
+        hints.priority = 1;
+        break;
+      case 'ALLOCATE':
+        hints.duration = 500;
+        hints.easing = 'ease-out';
+        hints.priority = 2;
+        break;
+      case 'FREE':
+        hints.duration = 300;
+        hints.easing = 'ease-in';
+        hints.priority = 2;
+        break;
+    }
+
+    return hints;
+  }
+
+  /**
+   * Get operations that should be animated together
+   */
+  getAnimationGroup(step: number): MemoryTraceEntry[] {
+    if (step < 0 || step >= this.traceLog.length) {
+      return [];
+    }
+
+    const entry = this.traceLog[step];
+    const group = [entry];
+
+    // Group related operations for smoother animation
+    if (entry.operation === 'WRITE' && entry.metadata?.isArray) {
+      // Group array element writes
+      const line = entry.line;
+      for (let i = step + 1; i < this.traceLog.length; i++) {
+        const nextEntry = this.traceLog[i];
+        if (nextEntry.line === line && nextEntry.operation === 'WRITE') {
+          group.push(nextEntry);
+        } else {
+          break;
+        }
+      }
+    }
+
+    return group;
+  }
+
+  /**
+   * Clear all state including variable tracking
+   */
+  clear(): void {
+    this.traceLog = [];
+    this.stepCounter = 0;
+    this.startTime = Date.now();
+    this.variableStates.clear();
+  }
 }
