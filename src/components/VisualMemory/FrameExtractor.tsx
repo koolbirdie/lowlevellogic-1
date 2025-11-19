@@ -229,4 +229,4 @@ const FrameExtractorComponent: React.FC<FrameExtractorProps> = ({
   return null;
 };
 
-export default FrameExtractor;
+export default FrameExtractorComponent;
