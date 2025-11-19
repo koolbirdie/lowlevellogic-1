@@ -97,7 +97,7 @@ export class MemoryStateManager {
   // Process a single operation
   private processOperation(
     operation: MemoryTraceEntry,
-    memoryState: Map<number, any>,
+    memoryState: Map<string, any>,
     variableAddresses: Map<string, number>,
     allocations: Array<{ address: number; size: number; type: string; variable?: string }>,
     variables: Map<string, Variable>
