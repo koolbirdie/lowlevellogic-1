@@ -133,6 +133,12 @@ export default function MemoryView({
 
       <div className={styles.tabs}>
         <button
+          className={`${styles.tab} ${activeTab === 'visual' ? styles.active : ''}`}
+          onClick={() => setActiveTab('visual')}
+        >
+          Visual Memory
+        </button>
+        <button
           className={`${styles.tab} ${activeTab === 'variables' ? styles.active : ''}`}
           onClick={() => setActiveTab('variables')}
         >
