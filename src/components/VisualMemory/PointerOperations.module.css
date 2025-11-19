@@ -1,0 +1,247 @@
+.pointerOperations {
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.title {
+  margin: 0;
+  color: #007bff;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.count {
+  background: #007bff;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.empty {
+  text-align: center;
+  color: #6c757d;
+  font-style: italic;
+  padding: 32px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.operationsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.operation {
+  border: 1px solid #dee2e6;
+  border-left: 4px solid #6c757d;
+  border-radius: 6px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.operation:hover {
+  background: #f8f9fa;
+  transform: translateX(2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.operation.selected {
+  background: #e3f2fd;
+  border-color: #2196f3;
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+}
+
+.operationHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+}
+
+.operationIcon {
+  font-size: 14px;
+}
+
+.operationType {
+  font-weight: bold;
+  color: #495057;
+  background: #e9ecef;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.operationStep {
+  color: #6c757d;
+}
+
+.operationLine {
+  color: #6c757d;
+}
+
+.operationDetails {
+  margin-bottom: 8px;
+}
+
+.pointerName {
+  font-weight: bold;
+  color: #007bff;
+  margin-bottom: 4px;
+  font-family: 'Courier New', monospace;
+}
+
+.addresses {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-family: 'Courier New', monospace;
+}
+
+.pointerAddr,
+.targetAddr {
+  background: #f1f3f4;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.arrow {
+  color: #007bff;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.description {
+  font-size: 12px;
+  color: #6c757d;
+  font-style: italic;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #f1f3f4;
+}
+
+.selectedInfo {
+  margin-top: 16px;
+  padding: 16px;
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  border-radius: 8px;
+  border: 1px solid #2196f3;
+}
+
+.selectedHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.selectedHeader h5 {
+  margin: 0;
+  color: #1976d2;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.clearSelection {
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background-color 0.2s ease;
+}
+
+.clearSelection:hover {
+  background: #d32f2f;
+}
+
+.selectedDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+}
+
+.detailLabel {
+  font-weight: bold;
+  color: #1976d2;
+  min-width: 100px;
+}
+
+.detailValue {
+  color: #424242;
+  background: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
+}
+
+/* Animation for new operations */
+@keyframes slideInOperation {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.operation {
+  animation: slideInOperation 0.3s ease-out;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .pointerOperations {
+    padding: 12px;
+  }
+
+  .operationHeader {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .addresses {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .arrow {
+    transform: rotate(90deg);
+  }
+}
