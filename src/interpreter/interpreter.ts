@@ -169,6 +169,7 @@ export class Interpreter {
   }
 
   private async* executeNode(node: ASTNode, context: ExecutionContext): AsyncGenerator<string, any, unknown> {
+    console.log(`[EXECUTION] executeNode called with type: ${node.type} at line ${node.line}`);
     this.iterationCount++;
     if (this.iterationCount > MAX_ITERATIONS) {
       throw new RuntimeError('Execution timeout: Possible infinite loop', node.line);
