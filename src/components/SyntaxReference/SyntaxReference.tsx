@@ -157,6 +157,59 @@ const syntaxData: SyntaxItem[] = [
     ],
   },
   {
+    category: 'Pointers & Memory Management',
+    items: [
+      {
+        title: 'Pointer Declaration',
+        syntax: 'DECLARE <identifier> : POINTER_TO_<type>\nDECLARE <identifier> : VOID_POINTER',
+        example: 'DECLARE intPtr : POINTER_TO_INTEGER\nDECLARE charPtr : POINTER_TO_CHAR\nDECLARE genericPtr : VOID_POINTER',
+        description: 'Declares a pointer variable that can store memory addresses of specific data types. VOID_POINTER can point to any type.',
+      },
+      {
+        title: 'Address Operator (&)',
+        syntax: '<pointer_variable> <- &<variable>',
+        example: 'DECLARE x : INTEGER\nDECLARE intPtr : POINTER_TO_INTEGER\nintPtr <- &x  // Get address of x',
+        description: 'Gets the memory address of a variable and stores it in a pointer variable.',
+      },
+      {
+        title: 'Dereference Operator (*)',
+        syntax: '*<pointer_variable>',
+        example: 'DECLARE x, value : INTEGER\nDECLARE intPtr : POINTER_TO_INTEGER\nintPtr <- &x\n*intPtr <- 42  // Modify x through pointer\nvalue <- *intPtr  // Read x through pointer',
+        description: 'Accesses or modifies the value stored at the memory address pointed to by a pointer.',
+      },
+      {
+        title: 'MALLOC',
+        syntax: '<pointer_variable> <- MALLOC(<size_in_bytes>)',
+        example: 'DECLARE dynamicArray : POINTER_TO_INTEGER\nDECLARE arraySize, elementSize : INTEGER\narraySize <- 10\nelementSize <- SIZE_OF(INTEGER)\ndynamicArray <- MALLOC(elementSize * arraySize)',
+        description: 'Allocates dynamic memory and returns a pointer to the allocated block. Size must be specified in bytes.',
+      },
+      {
+        title: 'FREE',
+        syntax: 'FREE(<pointer_variable>)',
+        example: 'DECLARE dynamicArray : POINTER_TO_INTEGER\ndynamicArray <- MALLOC(40)\n// Use the allocated memory\nFREE(dynamicArray)  // Deallocate to prevent memory leaks',
+        description: 'Deallocates previously allocated memory to prevent memory leaks. Always call FREE() after using MALLOC().',
+      },
+      {
+        title: 'SIZE_OF',
+        syntax: 'SIZE_OF(<type_or_pointer_type>)',
+        example: 'DECLARE intSize, ptrSize : INTEGER\nintSize <- SIZE_OF(INTEGER)  // Returns bytes for INTEGER\nptrSize <- SIZE_OF(POINTER_TO_INTEGER)  // Returns pointer size',
+        description: 'Returns the size in bytes of a data type or pointer type. Useful for calculating memory allocation sizes.',
+      },
+      {
+        title: 'Pointer Assignment',
+        syntax: '<pointer2> <- <pointer1>',
+        example: 'DECLARE ptr1, ptr2 : POINTER_TO_INTEGER\nDECLARE x : INTEGER\nptr1 <- &x\nptr2 <- ptr1  // Both pointers now point to x\n*ptr2 <- 99  // Modifies x through either pointer',
+        description: 'Assigns one pointer to another. Both pointers will point to the same memory location.',
+      },
+      {
+        title: 'Pointer Types',
+        syntax: 'POINTER_TO_INTEGER\nPOINTER_TO_REAL\nPOINTER_TO_CHAR\nVOID_POINTER',
+        example: 'DECLARE intPtr : POINTER_TO_INTEGER\nDECLARE realPtr : POINTER_TO_REAL\nDECLARE charPtr : POINTER_TO_CHAR\nDECLARE genericPtr : VOID_POINTER',
+        description: 'Available pointer types. Each pointer type can only point to its corresponding data type, except VOID_POINTER which can point to any type.',
+      },
+    ],
+  },
+  {
     category: 'Built-in Functions',
     items: [
       {
